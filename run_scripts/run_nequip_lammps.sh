@@ -9,6 +9,8 @@
 #SBATCH --account=research-me-pe
 #SBATCH --mail-type=FAIL
 
+# THIS SCRIPT RUNS THE TRAINING ON NEQUIP AND ALSO PERFORMS THE SUBSEQUENT DEPLOYMENT ON LAMMPS
+
 # Expected directory structure:
 #
 # project/
@@ -28,6 +30,8 @@
 
 # Change run no. accordingly
 run_no=1
+# Alternatively, , as an input parameter when running the script
+# run_no=$1
 
 # PLEASE CHANGE THIS PATH ACCORDINGLY
 lmp_path=/scratch/dwee/software/nequip/lammps_nequip/build
@@ -78,8 +82,8 @@ mv results wandb si-deployed.pth si.rdf log.lammps training.out pre-deploy.out d
 
 echo "Simulation done, copying back" 
 # copy back
-rm slurm*
 rsync -a "$(pwd -P)/" ${SLURM_SUBMIT_DIR}
 rm -rf /tmp/${SLURM_JOBID}
+rm ${SLURM_SUBMIT_DIR}/slurm-${SLURM_JOBID}.out
 
 seff ${SLURM_JOBID}
