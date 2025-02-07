@@ -29,6 +29,7 @@
 # Change run no. accordingly
 run_no=1
 
+# PLEASE CHANGE THIS PATH ACCORDINGLY
 lmp_path=/scratch/dwee/software/nequip/lammps_nequip/build
 
 # Get modules
