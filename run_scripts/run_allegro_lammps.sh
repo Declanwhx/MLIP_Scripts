@@ -9,6 +9,8 @@
 #SBATCH --account=research-me-pe
 #SBATCH --mail-type=FAIL
 
+# THIS SCRIPT RUNS THE TRAINING ON ALLEGRO AND ALSO PERFORMS THE SUBSEQUENT DEPLOYMENT ON LAMMPS
+
 # Expected directory structure:
 #
 # project/
@@ -28,6 +30,8 @@
 
 # Change run no. accordingly
 run_no=1
+# Alternatively, as an input parameter when running the script
+run_no=$1
 
 # PLEASE CHANGE THIS PATH ACCORDINGLY
 lmp_path=/scratch/dwee/software/allegro/lammps_allegro/build
@@ -71,15 +75,15 @@ echo "Deployment done"
 srun --output=deploy.out $lmp_path/lmp -in ./inputlammps # -sf kk -k on gpus 1 -pk kokkos newton on neigh full
 ####################################################################################################################################
 
-# Delete old output files, comment out if you want to retain them
-rm -rf output_files*
+# Delete old output files (OPTIONAL)
+# rm -rf output_files*
 mkdir output_files_$run_no
 mv results wandb si-deployed.pth si.rdf log.lammps training.out pre-deploy.out deploy.out output_files_$run_no
 
 echo "Simulation done, copying back" 
 # copy back
-rm slurm-*
 rsync -a "$(pwd -P)/" ${SLURM_SUBMIT_DIR}
 rm -rf /tmp/${SLURM_JOBID}
+rm ${SLURM_SUBMIT_DIR}/slurm-${SLURM_JOBID}.out
 
 seff ${SLURM_JOBID}
