@@ -31,7 +31,7 @@
 # Change run no. accordingly
 run_no=1
 # Alternatively, as an input parameter when running the script
-run_no=$1
+# run_no=$1
 
 # PLEASE CHANGE THIS PATH ACCORDINGLY
 lmp_path=/scratch/dwee/software/allegro/lammps_allegro/build
