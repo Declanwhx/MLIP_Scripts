@@ -29,6 +29,7 @@
 # Change run no. accordingly
 run_no=1
 
+# PLEASE CHANGE THIS PATH ACCORDINGLY
 lmp_path=/scratch/dwee/software/allegro/lammps_allegro/build
 
 # Get modules
