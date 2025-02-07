@@ -53,7 +53,6 @@ start1=$(date +%s)
 echo "Starting to copy"
 cp -r ${SLURM_SUBMIT_DIR} /tmp/${SLURM_JOBID}
 cd /tmp/${SLURM_JOBID}
-# rm slurm-${SLURM_JOBID}.out
 stop1=$(date +%s)
 echo "Copying done, simulation starting, time elapsed is $(($stop1-$start1)) seconds"
 
@@ -79,7 +78,7 @@ mv results wandb si-deployed.pth si.rdf log.lammps training.out pre-deploy.out d
 
 echo "Simulation done, copying back" 
 # copy back
-rm slurm-${SLURM_JOBID}.out
+rm slurm-*
 rsync -a "$(pwd -P)/" ${SLURM_SUBMIT_DIR}
 rm -rf /tmp/${SLURM_JOBID}
 
