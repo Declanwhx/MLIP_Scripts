@@ -19,7 +19,7 @@ conda activate nequip_$nequip_vers
 
 ################################################################## NEQUIP INSTALLATION ##################################################################
 # Navigate out of script file first
-cd ..
+# cd ..
 
 rm -rf nequip
 mkdir nequip
