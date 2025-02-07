@@ -20,7 +20,7 @@ conda activate allegro_$allegro_vers
 
 ################################################################## ALLEGRO INSTALLATION ##################################################################
 # Navigate out of script file first
-cd ..
+# cd ..
 
 rm -rf allegro
 mkdir allegro
