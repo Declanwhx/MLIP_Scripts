@@ -33,7 +33,7 @@ nequip_pair_vers=main
 lammps_vers=stable
 
 # Location env variable. PLEASE CHANGE THIS TO YOUR INTENDED INSTALL LOCATION.
-lammps_path=/scratch/dwee/software/nequip/lammps_nequip
+lammps_path=~/software/nequip/lammps_nequip
 
 # Loading modules
 module load 2023r1-gcc11
