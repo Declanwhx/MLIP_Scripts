@@ -7,6 +7,9 @@ allegro_pair_vers=main
 nequip_vers=0.6.1
 lammps_vers=stable
 
+# Location env variable. PLEASE CHANGE THIS TO YOUR INTENDED INSTALL LOCATION.
+lammps_path=/scratch/dwee/software/allegro/lammps_allegro
+
 # Loading modules
 module load 2023r1-gcc11
 module load openmpi/4.1.4
@@ -49,9 +52,6 @@ pip install .
 cd ..
 
 ################################################################## LAMMPS INSTALLATION ##################################################################
-# Location env variable. PLEASE CHANGE THIS TO YOUR INTENDED INSTALL LOCATION.
-lammps_path=/scratch/dwee/software/allegro/lammps_allegro
-
 # Git clone stable version of LAMMPS
 rm -rf lammps_allegro
 git clone https://github.com/lammps/lammps.git lammps_allegro
