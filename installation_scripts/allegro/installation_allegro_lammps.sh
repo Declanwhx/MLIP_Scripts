@@ -34,7 +34,7 @@ nequip_vers=0.6.1
 lammps_vers=stable
 
 # Location env variable. PLEASE CHANGE THIS TO YOUR INTENDED INSTALL LOCATION.
-lammps_path=~/software/allegro/lammps_allegro
+lammps_path=$HOME/software/allegro/lammps_allegro
 
 # Loading modules
 module load 2023r1-gcc11
