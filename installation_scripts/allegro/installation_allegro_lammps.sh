@@ -5,6 +5,7 @@
 allegro_vers=main
 allegro_pair_vers=main
 nequip_vers=0.6.1
+lammps_vers=stable
 
 # Loading modules
 module load 2023r1-gcc11
@@ -21,7 +22,7 @@ conda activate allegro_$allegro_vers
 
 ################################################################## ALLEGRO INSTALLATION ##################################################################
 # Navigate out of script file first
-cd ..
+cd ../../
 
 rm -rf allegro
 mkdir allegro
@@ -48,17 +49,16 @@ pip install .
 cd ..
 
 ################################################################## LAMMPS INSTALLATION ##################################################################
-# Location env variables
+# Location env variable. PLEASE CHANGE THIS TO YOUR INTENDED INSTALL LOCATION.
 lammps_path=/scratch/dwee/software/allegro/lammps_allegro
 
 # Git clone stable version of LAMMPS
 rm -rf lammps_allegro
 git clone https://github.com/lammps/lammps.git lammps_allegro
 cd lammps_allegro
-git checkout stable
+git checkout $lammps_vers
 
-# Navigate back to main folder
-# cd ..
+cd ..
 
 # Git clone stable version of pair_allegro and patch
 rm -rf pair_allegro

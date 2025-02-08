@@ -4,6 +4,7 @@
 # Change versions accordingly (Note: the developers of Allegro and NequIP have adopted the naming convention "main" and "develop" instead of the usualy "stable")
 nequip_vers=0.6.1
 nequip_pair_vers=main
+lammps_vers=stable
 
 # Loading modules
 module load 2023r1-gcc11
@@ -20,7 +21,7 @@ conda activate nequip_$nequip_vers
 
 ################################################################## NEQUIP INSTALLATION ##################################################################
 # Navigate out of script file first
-# cd ..
+cd ../../
 
 rm -rf nequip
 mkdir nequip
@@ -37,14 +38,14 @@ pip install wandb
 pip install nequip==$nequip_vers
 
 ################################################################## LAMMPS INSTALLATION ##################################################################
-# Location env variables
+# Location env variables. PLEASE CHANGE THIS TO YOUR INTENDED INSTALL LOCATION.
 lammps_path=/scratch/dwee/software/nequip/lammps_nequip
 
 # Git clone stable version of LAMMPS
 rm -rf lammps_nequip
 git clone https://github.com/lammps/lammps.git lammps_nequip
 cd lammps_nequip
-git checkout stable
+git checkout $lammps_vers
 
 # Navigate back to main folder
 cd ..
