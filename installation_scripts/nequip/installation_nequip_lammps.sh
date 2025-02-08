@@ -1,8 +1,31 @@
 #!/bin/sh
 # THIS FILE INSTALLS BOTH THE NEQUIP MLIP AND PAIR_NEQUIP LAMMPS
 
-# NOTE: CLONE THE "INSTALLATION_SCRIPTS" FOLDER TO YOUR SOFTWARE FOLDER AND JUST RUN THE INSTALLATION SCRIPT, THERE IS NO NEED TO MOVE THE SCRIPT AROUND,
-#       IT WILL NAVIGATE OUT OF THIS FOLDER TO INSTALL IN THE SOFTWARE FOLDER.
+# NOTE: CLONE THE "INSTALLATION_SCRIPTS" FOLDER TO YOUR SOFTWARE FOLDER AND JUST RUN THE INSTALLATION SCRIPT, THERE IS NO NEED TO MOVE THE SCRIPT AROUND, IT WILL NAVIGATE OUT OF THIS FOLDER TO INSTALL IN THE SOFTWARE FOLDER.
+
+# Expected directory structure:
+#
+# software/
+# ├── installation_scripts/
+# │   ├── allegro/
+# │       └── installation_allegro_lammps.sh
+# │   ├── deepmd/
+# │       └── installation_deepmd.sh
+# │   └── nequip/
+# │       └── installation_nequip_lammps.sh
+# ├── allegro
+# │   ├── allegro/
+# │   ├── pair_allegro/
+# │   └── lammps_allegro/
+# │       └── build/
+# │           └── lmp
+# ├── deepmd
+# └── nequip
+#     ├── nequip/
+#     ├── pair_nequip/
+#     └── lammps_nequip/
+#         └── build/
+#             └── lmp
  
 # Change versions accordingly (Note: the developers of Allegro and NequIP have adopted the naming convention "main" and "develop" instead of the usualy "stable")
 nequip_vers=0.6.1
