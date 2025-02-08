@@ -1,6 +1,9 @@
 #!/bin/sh
 # THIS SCRIPT INSTALLS BOTH ALLEGRO AND THE PAIR_ALLEGRO LAMMPS
 
+# NOTE: CLONE THE "INSTALLATION_SCRIPTS" FOLDER TO YOUR SOFTWARE FOLDER AND JUST RUN THE INSTALLATION SCRIPT, THERE IS NO NEED TO MOVE THE SCRIPT AROUND,
+#       IT WILL NAVIGATE OUT OF THIS FOLDER TO INSTALL IN THE SOFTWARE FOLDER.
+
 # Change versions accordingly (Note: the developers of Allegro and NequIP have adopted the naming convention "main" and "develop" instead of the usualy "stable")
 allegro_vers=main
 allegro_pair_vers=main
