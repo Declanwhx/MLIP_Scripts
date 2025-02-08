@@ -6,6 +6,9 @@ nequip_vers=0.6.1
 nequip_pair_vers=main
 lammps_vers=stable
 
+# Location env variables. PLEASE CHANGE THIS TO YOUR INTENDED INSTALL LOCATION.
+lammps_path=/scratch/dwee/software/nequip/lammps_nequip
+
 # Loading modules
 module load 2023r1-gcc11
 module load openmpi/4.1.4
@@ -38,9 +41,6 @@ pip install wandb
 pip install nequip==$nequip_vers
 
 ################################################################## LAMMPS INSTALLATION ##################################################################
-# Location env variables. PLEASE CHANGE THIS TO YOUR INTENDED INSTALL LOCATION.
-lammps_path=/scratch/dwee/software/nequip/lammps_nequip
-
 # Git clone stable version of LAMMPS
 rm -rf lammps_nequip
 git clone https://github.com/lammps/lammps.git lammps_nequip
