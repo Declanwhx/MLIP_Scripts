@@ -91,6 +91,7 @@ def ase_formatting(xyz_file):
 
     # --- Write LAMMPS Data File ---
     write("h2o.data", atoms, format="lammps-data")
+    write("h2o.pdb", atoms, format="proteindatabank")
     print("LAMMPS data file 'lammps.data' has been written.")
 
 
@@ -140,8 +141,10 @@ def prepare_config(i, temp_dir, args, result):
     ase_formatting(simbox_path)
 
     data_path = os.path.join(os.getcwd(), "h2o.data")
+    pdb_path =  os.path.join(os.getcwd(), "h2o.pdb")
     os.chdir(os.path.join(os.getcwd(), "../"))
     shutil.copy(data_path, f'./h2o_{i}.data')
+    shutil.copy(pdb_path, f'./h2o_{i}.pdb')
     os.chdir(os.path.join(os.getcwd(), "../"))
 
 if __name__ == "__main__":
