@@ -86,26 +86,26 @@ git checkout $allegro_vers
 pip install .
 cd ..
 
-# =================
-# 🔧 Install LAMMPS
-# =================
+# ===============
+# 🔧 Clone LAMMPS
+# ===============
 git clone https://github.com/lammps/lammps.git lammps_allegro
 cd lammps_allegro
 git checkout $lammps_vers
 cd ..
 
-# ========================================
-# 🔧 Install Pair_Allegro and Patch LAMMPS
-# ========================================
+# ======================================
+# 🔧 Clone Pair_Allegro and Patch LAMMPS
+# ======================================
 git clone https://github.com/mir-group/pair_allegro
 cd pair_allegro
 git checkout $allegro_pair_vers
 ./patch_lammps.sh $lammps_path
 cd $lammps_path
 
-# ===============
-# 🔧 Install OCTP
-# ===============
+# =============
+# 🔧 Clone OCTP
+# =============
 git clone https://github.com/omoultosEthTuDelft/OCTP.git
 cp OCTP/*.h OCTP/*.cpp $lammps_path/src
 
