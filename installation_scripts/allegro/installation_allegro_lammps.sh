@@ -36,44 +36,52 @@
 #         └── build/
 #             └── lmp
 
-# Change versions accordingly
 allegro_vers=main
 allegro_pair_vers=main
 nequip_vers=0.6.1
 lammps_vers=stable
 
 # Location env variable
-lammps_path=/scratch/dwee/software/allegro/lammps_allegro
+lammps_path=/scratch/dwee/software/allegro_lammps/lammps_allegro
 
 # ======================
 # 🔧 Load System Modules
 # ======================
-module load 2023r1-gcc11
+module load 2024r1
 module load miniconda3
-module load openmpi/4.1.4
 module load cuda/11.6
-module load cmake/3.24.3
-module load fftw/3.3.10
+module load cudnn/8.7.0.84-11.8
+module load py-numpy/1.24.1
+module load py-scipy/1.11.3
+module load openmpi/4.1.6
+module load cmake/3.27.7
+module load fftw/3.3.10_openmp_True
+
+# Set CUDA module paths
+export CUDA_HOME=/beegfs/apps/generic/cuda-11.6
+export LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH
+
+# Add cuDNN module paths
+export CUDNN_HOME=/beegfs/apps/generic/cudnn-8.7.0.84-11.8
+export LD_LIBRARY_PATH=$CUDNN_HOME/lib:$LD_LIBRARY_PATH
 
 # ===========================
-# 🔧 Create Conda Environment
+# 🔧 Create Conda Environment 
 # ===========================
-conda remove -n allegro_$allegro_vers --all -y
-conda create -n allegro_$allegro_vers python=3.10 -y
-conda activate allegro_$allegro_vers 
+conda remove -n allegro --all -y
+conda create -n allegro python=3.10 -y
+conda activate allegro
 
 cd ../../
-rm -rf allegro
-mkdir allegro
-cd allegro
+rm -rf allegro_lammps
+mkdir allegro_lammps
+cd allegro_lammps
 
 # =======================
 # 🔧 Install Dependencies
 # =======================
-conda install numpy=1.26.4 scipy=1.11.3 -c conda-forge -y
-conda install pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 -c pytorch -y
+conda install pytorch==1.11.0 -c pytorch -y
 conda install mkl-include -y
-conda install -c conda-forge cudnn=8.9.2.26 -y
 pip install wandb
 pip install nequip==$nequip_vers
 
@@ -86,26 +94,26 @@ git checkout $allegro_vers
 pip install .
 cd ..
 
-# ===============
-# 🔧 Clone LAMMPS
-# ===============
+# ===================
+# 🔧 Git Clone LAMMPS
+# ===================
 git clone https://github.com/lammps/lammps.git lammps_allegro
 cd lammps_allegro
 git checkout $lammps_vers
 cd ..
 
-# ======================================
-# 🔧 Clone Pair_Allegro and Patch LAMMPS
-# ======================================
+# ========================================
+# 🔧 Install Pair_Allegro and Patch LAMMPS
+# ========================================
 git clone https://github.com/mir-group/pair_allegro
 cd pair_allegro
 git checkout $allegro_pair_vers
 ./patch_lammps.sh $lammps_path
 cd $lammps_path
 
-# =============
-# 🔧 Clone OCTP
-# =============
+# ================================
+# 🔧 Install OCTP and Patch Lammps
+# ================================
 git clone https://github.com/omoultosEthTuDelft/OCTP.git
 cp OCTP/*.h OCTP/*.cpp $lammps_path/src
 
@@ -114,29 +122,6 @@ cp OCTP/*.h OCTP/*.cpp $lammps_path/src
 # ===================
 wget https://download.pytorch.org/libtorch/cu113/libtorch-cxx11-abi-shared-with-deps-1.11.0%2Bcu113.zip
 unzip -q libtorch-cxx11-abi-shared-with-deps-1.11.0+cu113.zip
-
-# ===================================================================
-# 🔧 Remove Conflicting Conda Libraries in cuDNN & Module Loaded CUDA 
-# ===================================================================
-rm -rf $CONDA_PREFIX/lib/libgomp*
-rm -rf $CONDA_PREFIX/lib/libcuda*
-rm -rf $CONDA_PREFIX/lib/libcudart*
-rm -rf $CONDA_PREFIX/lib/libcufft*
-rm -rf $CONDA_PREFIX/lib/libcurand*
-rm -rf $CONDA_PREFIX/lib/libcublas*
-rm -rf $CONDA_PREFIX/lib/libnvrtc*
-rm -rf $CONDA_PREFIX/lib/libcusolver*
-rm -rf $CONDA_PREFIX/lib/libcusparse*
-rm -rf $CONDA_PREFIX/lib/libnvToolsExt*
-
-# Set CUDA module paths
-export CUDA_HOME=/beegfs/apps/generic/cuda-11.6
-export LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH
-
-# Add cuDNN from Conda
-export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
-export CUDNN_INCLUDE_DIR=$CONDA_PREFIX/include
-export CUDNN_LIBRARY=$CONDA_PREFIX/lib/libcudnn.so
 
 # ==================================
 # 🔧 Build LAMMPS with Kokkos + CUDA
@@ -181,6 +166,7 @@ ALL_PACKAGES=(
   TALLY
 )
 
+rm -rf build
 mkdir build
 cd build
 
@@ -190,27 +176,22 @@ for PKG in "${ALL_PACKAGES[@]}"; do
   ADD_PACKAGES+=" -D PKG_${PKG}=yes"
 done
 
-# Kokkos Configuration (NOTE: KOKKOS IS CASE-SENSITIVE!!!)
+# Kokkos Configuration
 KOKKOS_SETTINGS="-D Kokkos_ENABLE_CUDA=ON"
 KOKKOS_SETTINGS+=" -D Kokkos_ENABLE_OPENMP=ON"
 KOKKOS_SETTINGS+=" -D Kokkos_ARCH_AMPERE80=ON"  
 KOKKOS_SETTINGS+=" -D FFT_KOKKOS=cuFFT"
-
-# Ensure cuBLAS and cuDNN are properly linked
-COMPILER_SETTINGS="-D CMAKE_INCLUDE_PATH=$CONDA_PREFIX/include;/beegfs/apps/generic/cuda-11.6/include"
-COMPILER_SETTINGS+=" -D CMAKE_LIBRARY_PATH=$CONDA_PREFIX/lib;/beegfs/apps/generic/cuda-11.6/targets/x86_64-linux/lib"
-COMPILER_SETTINGS+=" -D CUDA_CUBLAS_LIBRARIES='/beegfs/apps/generic/cuda-11.6/targets/x86_64-linux/lib/libcublas.so;/beegfs/apps/generic/cuda-11.6/targets/x86_64-linux/lib/libcublasLt.so'"
-COMPILER_SETTINGS+=" -D CUDA_CUDNN_LIBRARIES='$CONDA_PREFIX/lib/libcudnn.so'"
 
 # Allegro Settings
 ALLEGRO_SETTINGS="-DCMAKE_PREFIX_PATH=$lammps_path/libtorch"
 ALLEGRO_SETTINGS+=" -DMKL_INCLUDE_DIR=$CONDA_PREFIX/include"
 
 # Build LAMMPS
-CMAKE_PREP="cmake $ADD_PACKAGES $COMPILER_SETTINGS $KOKKOS_SETTINGS $ALLEGRO_SETTINGS ../cmake"
+CMAKE_PREP="cmake $ADD_PACKAGES $KOKKOS_SETTINGS $ALLEGRO_SETTINGS ../cmake"
 $CMAKE_PREP
-CMAKE_BUILD="cmake --build . -j 6"
+CMAKE_BUILD="cmake --build . -j 8"
 $CMAKE_BUILD
 
 cd ..
 conda deactivate
+
