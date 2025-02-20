@@ -1,10 +1,10 @@
 #!/bin/sh
 #SBATCH --job-name="install_nequip"
-#SBATCH --partition=gpu-a100
+#SBATCH --partition=gpu-a100-small
 #SBATCH --time=03:00:00
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-task=1
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task=6
 #SBATCH --mem-per-cpu=8G
 #SBATCH --account=research-me-pe
 
@@ -151,7 +151,6 @@ ALL_PACKAGES=(
   EXTRA-PAIR
   GRANULAR
   INTERLAYER
-  KOKKOS
   KSPACE
   MANYBODY
   MOLECULE
@@ -163,7 +162,6 @@ ALL_PACKAGES=(
   TALLY
 )
 
-rm -rf build
 mkdir build
 cd build
 
@@ -173,20 +171,14 @@ for PKG in "${ALL_PACKAGES[@]}"; do
   ADD_PACKAGES+=" -D PKG_${PKG}=yes"
 done
 
-# Kokkos Configuration (NOTE: KOKKOS IS CASE-SENSITIVE!!!)
-KOKKOS_SETTINGS="-D Kokkos_ENABLE_CUDA=ON"
-KOKKOS_SETTINGS+=" -D Kokkos_ENABLE_OPENMP=ON"
-KOKKOS_SETTINGS+=" -D Kokkos_ARCH_AMPERE80=ON"  
-KOKKOS_SETTINGS+=" -D FFT_KOKKOS=cuFFT"
-
 # Allegro Settings
 ALLEGRO_SETTINGS="-DCMAKE_PREFIX_PATH=$lammps_path/libtorch"
 ALLEGRO_SETTINGS+=" -DMKL_INCLUDE_DIR="$CONDA_PREFIX/include""
 
 # Build LAMMPS
-CMAKE_PREP="cmake $ADD_PACKAGES $KOKKOS_SETTINGS $ALLEGRO_SETTINGS ../cmake"
+CMAKE_PREP="cmake $ADD_PACKAGES $ALLEGRO_SETTINGS ../cmake"
 $CMAKE_PREP
-CMAKE_BUILD="cmake --build . -j 8"
+CMAKE_BUILD="cmake --build . -j 6"
 $CMAKE_BUILD
 
 cd ..
