@@ -1,10 +1,10 @@
 #!/bin/sh
 #SBATCH --job-name="install_allegro"
 #SBATCH --partition=gpu-a100-small
-#SBATCH --time=04:00:00
+#SBATCH --time=02:00:00
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-task=1
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task=6
 #SBATCH --mem-per-cpu=8G
 #SBATCH --account=research-me-pe
 
@@ -181,7 +181,6 @@ ALL_PACKAGES=(
   TALLY
 )
 
-rm -rf build
 mkdir build
 cd build
 
@@ -210,7 +209,7 @@ ALLEGRO_SETTINGS+=" -DMKL_INCLUDE_DIR=$CONDA_PREFIX/include"
 # Build LAMMPS
 CMAKE_PREP="cmake $ADD_PACKAGES $COMPILER_SETTINGS $KOKKOS_SETTINGS $ALLEGRO_SETTINGS ../cmake"
 $CMAKE_PREP
-CMAKE_BUILD="cmake --build . -j 8"
+CMAKE_BUILD="cmake --build . -j 6"
 $CMAKE_BUILD
 
 cd ..
