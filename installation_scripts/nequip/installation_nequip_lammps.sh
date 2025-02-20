@@ -108,9 +108,9 @@ git checkout $nequip_pair_vers
 ./patch_lammps.sh $lammps_path 
 cd $lammps_path
 
-# =============================
-# 🔧 Clone OCTP and Path LAMMPS
-# =============================
+# ==============================
+# 🔧 Clone OCTP and Patch LAMMPS
+# ==============================
 git clone https://github.com/omoultosEthTuDelft/OCTP.git
 cp OCTP/*.h OCTP/*.cpp $lammps_path/src
 
