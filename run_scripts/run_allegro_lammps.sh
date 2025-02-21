@@ -4,7 +4,7 @@
 #SBATCH --time=00:05:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --gpus-per-task=1
+#SBATCH --gpus-per-task=2
 #SBATCH --mem-per-cpu=8G
 #SBATCH --account=research-me-pe
 #SBATCH --mail-type=FAIL
@@ -48,7 +48,7 @@ module load cmake/3.27.7
 module load fftw/3.3.10_openmp_True
 
 # Activate your environment
-conda activate allegro_main 
+conda activate allegro
 
 # Copy to temporary directory
 start1=$(date +%s)
@@ -70,7 +70,7 @@ echo "Deployment done"
 
 ############################################################## DEPLOY ##############################################################
 # run the simulation with ntasks*cpus-per-task cores
-srun --output=deploy.out $lmp_path/lmp -in ./inputlammps # -sf kk -k on gpus 1 -pk kokkos newton on neigh full
+srun --output=deploy.out $lmp_path/lmp -in ./inputlammps -sf kk -k on gpus 2 -pk kokkos newton on neigh full
 ####################################################################################################################################
 
 # Delete old output files (OPTIONAL)
