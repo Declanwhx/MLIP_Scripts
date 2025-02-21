@@ -74,9 +74,9 @@ export LIBRARY_PATH=$CUDNN_HOME/lib:$LIBRARY_PATH
 # ===========================
 # 🔧 Create Conda Environment
 # ===========================
-conda remove -n nequip_lammps --all -y
-conda create -n nequip_lammps python=3.10 -y
-conda activate nequip_lammps
+conda remove -n nequip--all -y
+conda create -n nequip python=3.10 -y
+conda activate nequip
 
 cd ../../
 rm -rf nequip_lammps
