@@ -44,9 +44,9 @@ lammps_vers=stable
 # Location env variable. PLEASE CHANGE THIS TO YOUR INTENDED INSTALL LOCATION.
 lammps_path=/scratch/dwee/software/nequip_lammps/lammps_nequip
 
-# ======================
-# 🔧 Load System Modules
-# ======================
+# ===============================================================
+# 🔧 Load System Modules (ONLY AVAILABLE ON DELFTBLUE A100 NODES)
+# ===============================================================
 module load 2024r1
 module load miniconda3
 module load openmpi/4.1.6
