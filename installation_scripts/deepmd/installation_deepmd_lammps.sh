@@ -41,9 +41,9 @@ deepmd_precompiled_c_path=/scratch/dwee/software/deepmd/libdeepmd_c
 deepmd_c_path=/scratch/dwee/software/deepmd/deepmd_cpp
 lammps_path=/scratch/dwee/software/deepmd/lammps-stable_29Aug2024_update1
 
-# ======================
-# 🔧 Load System Modules
-# ======================
+# ===============================================================
+# 🔧 Load System Modules (ONLY AVAILABLE ON DELFTBLUE A100 NODES)
+# ===============================================================
 module load 2024r1
 module load python/3.10.13
 module load cuda/12.5
