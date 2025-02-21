@@ -44,9 +44,9 @@ lammps_vers=stable
 # Location env variable
 lammps_path=/scratch/dwee/software/allegro_lammps/lammps_allegro
 
-# ======================
-# 🔧 Load System Modules
-# ======================
+# ===============================================================
+# 🔧 Load System Modules (ONLY AVAILABLE ON DELFTBLUE A100 NODES)
+# ===============================================================
 module load 2024r1
 module load miniconda3
 module load cuda/11.6
@@ -66,7 +66,7 @@ export CUDNN_HOME=/beegfs/apps/generic/cudnn-8.7.0.84-11.8
 export LD_LIBRARY_PATH=$CUDNN_HOME/lib:$LD_LIBRARY_PATH
 
 # ===========================
-# 🔧 Create Conda Environment 
+# 🔧 Create Conda Environment
 # ===========================
 conda remove -n allegro --all -y
 conda create -n allegro python=3.10 -y
