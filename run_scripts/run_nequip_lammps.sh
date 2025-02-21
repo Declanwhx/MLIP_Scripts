@@ -70,7 +70,7 @@ echo "Deployment done"
 
 ############################################################## DEPLOY ##############################################################
 # run the simulation with ntasks*cpus-per-task cores
-srun --output=deploy.out $lmp_path/lmp -in ./inputlammps # -sf kk -k on gpus 1 -pk kokkos newton on neigh full
+srun --output=deploy.out $lmp_path/lmp -in ./inputlammps
 ####################################################################################################################################
 
 # Delete old output files, comment out if you want to retain them
