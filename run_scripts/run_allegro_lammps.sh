@@ -1,6 +1,6 @@
 #!/bin/sh
 #SBATCH --job-name="allegro_run_gpu"
-#SBATCH --partition=gpu-a100-small
+#SBATCH --partition=gpu-a100
 #SBATCH --time=00:05:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
@@ -34,20 +34,18 @@ run_no=1
 # run_no=$1
 
 # PLEASE CHANGE THIS PATH ACCORDINGLY
-lmp_path=/scratch/dwee/software/allegro/lammps_allegro/build
+lmp_path=/scratch/dwee/software/allegro_lammps/lammps_allegro/build
 
 # Get modules
-module load 2023r1-gcc11
-module load openmpi/4.1.4
+module load 2024r1
 module load miniconda3
 module load cuda/11.6
-module load cmake/3.24.3
-module load fftw/3.3.10
-
-# Add conda correctly to the paths, this will be needed in runscripts later
-export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
-export CUDNN_INCLUDE_DIR=$CONDA_PREFIX/include
-export CUDNN_LIBRARY=$CONDA_PREFIX/lib
+module load cudnn/8.7.0.84-11.8
+module load py-numpy/1.24.1
+module load py-scipy/1.11.3
+module load openmpi/4.1.6
+module load cmake/3.27.7
+module load fftw/3.3.10_openmp_True
 
 # Activate your environment
 conda activate allegro_main 
