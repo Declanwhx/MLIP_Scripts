@@ -8,7 +8,7 @@
 #SBATCH --mem-per-cpu=8G
 #SBATCH --account=research-me-pe
 
-# THIS FILE INSTALLS BOTH THE DEEPMD MLIP AND PLUGIN LAMMPS
+# THIS FILE INSTALLS BOTH THE DEEPMD MLIP AND BUILTIN LAMMPS
 
 # NOTE: CLONE THE "INSTALLATION_SCRIPTS" FOLDER TO YOUR SOFTWARE FOLDER AND JUST RUN THE INSTALLATION SCRIPT, THERE IS NO NEED TO MOVE THE SCRIPT AROUND, IT WILL NAVIGATE OUT OF THIS FOLDER TO INSTALL IN THE SOFTWARE FOLDER.
 
@@ -42,17 +42,20 @@ deepmd_source_path=/scratch/dwee/software/deepmd/deepmd_source
 deepmd_precompiled_c_path=/scratch/dwee/software/deepmd/libdeepmd_c
 lammps_path=/scratch/dwee/software/deepmd/lammps-stable_29Aug2024_update1
 
-# ======================
-# 🔧 Load System Modules
-# ======================
+# ==================================================================
+# 🔧 Load System Modules (ONLY WORKS WITH DELFTBLUE'S A100 NODES!!!)
+# ==================================================================
 module load 2024r1
 module load cuda/12.5
 module load cudnn/8.7.0.84-11.8
 module load nccl/2.19.3-1
-module load py-tensorflow/2.16.1
+
+# WE DO THIS SO THAT THE LOADING OF TENSORFLOW TRIGGERS THE VERSION CHANGE OF THE DEPENDENCIES
+# YOU COULD JUST LOAD THE CHANGED VERSIONS IF YOU WANT A MORE ELEGANT SCRIPT
+module load py-tensorflow/2.16.1 
 module unload py-tensorflow
+
 module load openmpi/4.1.6
-module load py-keras/3.3.3
 module load cmake/3.27.7
 module load fftw/3.3.10_openmp_True
 
@@ -122,13 +125,11 @@ DEEPMD_CPP_SETTINGS="-DUSE_TF_PYTHON_LIBS=TRUE"
 DEEPMD_CPP_SETTINGS+=" -DCMAKE_INSTALL_PREFIX=${deepmd_root}"
 DEEPMD_CPP_SETTINGS+=" -DUSE_CUDA_TOOLKIT=TRUE"
 DEEPMD_CPP_SETTINGS+=" -DCUDAToolkit_ROOT=${CUDA_HOME}"
-DEEPMD_CPP_SETTINGS+=" -DTENSORFLOW_INCLUDE_DIR=${TF_INCLUDE_DIR}"
-DEEPMD_CPP_SETTINGS+=" -DTENSORFLOW_LIB_DIR=${TF_LIB_DIR}"
 
 CMAKE_PREP="cmake $DEEPMD_CPP_SETTINGS .."
 $CMAKE_PREP
 
-make -j8
+make -j $SLURM_CPUS_PER_TASK
 make install
 
 
@@ -193,7 +194,7 @@ DEEPMD_SETTINGS+=" -D CMAKE_INSTALL_FULL_LIBDIR=${deepmd_root}/lib"
 CMAKE_PREP="cmake $ADD_PACKAGES $DEEPMD_SETTINGS ../cmake"
 $CMAKE_PREP
 
-make -j8
+make -j $SLURM_CPUS_PER_TASK
 make install
 
 deactivate
