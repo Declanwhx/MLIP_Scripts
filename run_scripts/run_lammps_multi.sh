@@ -1,0 +1,90 @@
+#!/bin/sh
+#SBATCH --job-name="allegro_run_10_r_multi_gpu"
+#SBATCH --partition=gpu-a100
+#SBATCH --time=02:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --gpus-per-task=1
+#SBATCH --mem-per-cpu=10G
+#SBATCH --account=research-me-pe
+#SBATCH --mail-type=FAIL
+#SBATCH --output=mpi-out.%j
+#SBATCH --error=mpi-err.%j
+
+# Expected directory structure:
+#
+# project/
+# ├── input_files/
+# │   ├── si.data
+# │   └── Si_data
+# │       └── /Si_data
+# ├── input.yaml
+# ├── inputlammps
+# └── run_allegro.sh
+
+# project -> e.g H2O
+# inputlammps -> LAMMPS input settings file
+# input.yaml -> Allegro input settings file
+# si.data -> Initializing snapshot of system for MD
+# Si_data -> Training and validation data for Allegro
+
+lmp_path=/scratch/dwee/software/allegro_lammps/lammps_allegro/build
+
+# Load Modules
+module load 2024r1
+module load miniconda3
+module load cuda/11.6
+module load cudnn/8.7.0.84-11.8
+module load py-numpy/1.24.1
+module load py-scipy/1.11.3
+module load openmpi/4.1.6
+module load cmake/3.27.7
+module load fftw/3.3.10_openmp_True
+
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+export CUDA_VISIBLE_DEVICES=$(echo $SLURM_JOB_GPUS | tr ',' '\n' | paste -sd ',')
+export OMP_PROC_BIND=spread
+export OMP_PLACES=threads
+export SLURM_MPI_TYPE=pmix  # Ensure correct MPI type
+export CUDA_LAUNCH_BLOCKING=1  # Debugging (optional)
+
+echo "SLURM assigned GPUs: $SLURM_JOB_GPUS"
+echo "CUDA_VISIBLE_DEVICES: $CUDA_VISIBLE_DEVICES"
+
+# Activate your environment
+conda activate allegro 
+
+# Copy to temporary directory
+start1=$(date +%s)
+echo "Starting to copy" >> slurm-${SLURM_JOB_ID}.out 2>&1
+cp -r ${SLURM_SUBMIT_DIR} /tmp/${SLURM_JOBID}
+cd /tmp/${SLURM_JOBID}
+stop1=$(date +%s) 
+echo "Copying done, simulation starting, time elapsed is $(($stop1-$start1)) seconds" >> slurm-${SLURM_JOB_ID}.out 2>&1
+
+############################################################## DEPLOY ##############################################################
+# run the simulation with ntasks*cpus-per-task cores
+previous=$(nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv | tail -n +2)
+
+srun --mpi=pmix \
+     --ntasks=1 \
+     --gpus-per-task=1 \
+     --cpus-per-task=1 \
+     --gpu-bind=none \
+     "$lmp_path/lmp" \
+     -in ./nvt_simulation.in \
+     -k on g 1 t 1 \
+     -sf kk \
+     -pk kokkos neigh full comm device cuda/aware off
+
+nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv | grep -v -F "$previous" >> slurm-${SLURM_JOB_ID}.out
+####################################################################################################################################
+
+echo "Simulation done, copying back" >> slurm-${SLURM_JOB_ID}.out 2>&1
+# copy back
+rsync -a "$(pwd -P)/" ${SLURM_SUBMIT_DIR}
+rm -rf /tmp/${SLURM_JOBID}
+rm ${SLURM_SUBMIT_DIR}/slurm-${SLURM_JOBID}.out
+
+seff ${SLURM_JOBID}

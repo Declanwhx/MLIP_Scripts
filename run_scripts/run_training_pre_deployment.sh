@@ -1,15 +1,14 @@
 #!/bin/sh
-#SBATCH --job-name="allegro_run_gpu"
-#SBATCH --partition=gpu-a100
-#SBATCH --time=00:05:00
+#SBATCH --job-name="allegro_run_10_r_multi_gpu"
+#SBATCH --partition=gpu-a100-small
+#SBATCH --time=01:00:00
+#SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --gpus-per-task=2
-#SBATCH --mem-per-cpu=8G
+#SBATCH --gpus-per-task=1
+#SBATCH --mem-per-cpu=30G
 #SBATCH --account=research-me-pe
 #SBATCH --mail-type=FAIL
-
-# THIS SCRIPT RUNS THE TRAINING ON ALLEGRO AND ALSO PERFORMS THE SUBSEQUENT DEPLOYMENT ON LAMMPS
 
 # Expected directory structure:
 #
@@ -29,14 +28,11 @@
 # Si_data -> Training and validation data for Allegro
 
 # Change run no. accordingly
-run_no=1
-# Alternatively, as an input parameter when running the script
-# run_no=$1
+run_no=$1
 
-# PLEASE CHANGE THIS PATH ACCORDINGLY
 lmp_path=/scratch/dwee/software/allegro_lammps/lammps_allegro/build
 
-# Get modules
+# Load Modules
 module load 2024r1
 module load miniconda3
 module load cuda/11.6
@@ -47,41 +43,40 @@ module load openmpi/4.1.6
 module load cmake/3.27.7
 module load fftw/3.3.10_openmp_True
 
+echo "SLURM assigned GPUs: $SLURM_JOB_GPUS"
+echo "CUDA_VISIBLE_DEVICES: $CUDA_VISIBLE_DEVICES"
+
 # Activate your environment
-conda activate allegro
+conda activate allegro 
 
 # Copy to temporary directory
 start1=$(date +%s)
-echo "Starting to copy"
+echo "Starting to copy" >> slurm-${SLURM_JOB_ID}.out 2>&1
 cp -r ${SLURM_SUBMIT_DIR} /tmp/${SLURM_JOBID}
 cd /tmp/${SLURM_JOBID}
-stop1=$(date +%s)
-echo "Copying done, simulation starting, time elapsed is $(($stop1-$start1)) seconds"
+stop1=$(date +%s) 
+echo "Copying done, simulation starting, time elapsed is $(($stop1-$start1)) seconds" >> slurm-${SLURM_JOB_ID}.out 2>&1
 
 ############################################################# TRAINING ############################################################
-srun --output=training.out nequip-train ./input.yaml
-echo "Training done"
+srun --ntasks=1 --gpus=0 --output=training.out nequip-train ./input.yaml >> slurm-${SLURM_JOB_ID}.out 2>&1
+echo "Training done" >> slurm-${SLURM_JOB_ID}.out 2>&1
 ####################################################################################################################################
 
 ############################################################ PRE-DEPLOY ############################################################
-srun --output=pre-deploy.out nequip-deploy build --train-dir results/Si/run-Si/ si-deployed.pth
-echo "Deployment done"
+srun --ntasks=1 --gpus=0 --output=pre-deploy.out nequip-deploy build --train-dir results/H2O/run-H2O/ h2o-deployed.pth >> slurm-${SLURM_JOB_ID}.out 2>&1
+echo "Deployment done" >> slurm-${SLURM_JOB_ID}.out 2>&1
 ####################################################################################################################################
 
-############################################################## DEPLOY ##############################################################
-# run the simulation with ntasks*cpus-per-task cores
-srun --output=deploy.out $lmp_path/lmp -in ./inputlammps -sf kk -k on gpus 2 -pk kokkos newton on neigh full
-####################################################################################################################################
-
-# Delete old output files (OPTIONAL)
+# Delete old output files, comment out if you want to retain them
 # rm -rf output_files*
 mkdir output_files_$run_no
-mv results wandb si-deployed.pth si.rdf log.lammps training.out pre-deploy.out deploy.out output_files_$run_no
+mv results wandb h2o.rdf log.lammps training.out pre-deploy.out *.dat output_files_$run_no
 
-echo "Simulation done, copying back" 
+echo "Simulation done, copying back" >> slurm-${SLURM_JOB_ID}.out 2>&1
 # copy back
 rsync -a "$(pwd -P)/" ${SLURM_SUBMIT_DIR}
 rm -rf /tmp/${SLURM_JOBID}
-rm ${SLURM_SUBMIT_DIR}/slurm-${SLURM_JOBID}.out
+# rm ${SLURM_SUBMIT_DIR}/slurm-${SLURM_JOBID}.out
 
 seff ${SLURM_JOBID}
+sacct --format=JobID,JobName,AllocCPUs,ReqMem,MaxRSS,Elapsed,MaxVMSize,CPUTime,TotalCPU,State --jobs=${SLURM_JOB_ID} >> slurm-${SLURM_JOB_ID}.out
