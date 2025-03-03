@@ -1,12 +1,12 @@
 #!/bin/sh
-#SBATCH --job-name="allegro_run_10_r_multi_gpu"
-#SBATCH --partition=gpu-a100-small
-#SBATCH --time=01:00:00
+#SBATCH --job-name=<JOB NAME>
+#SBATCH --partition=gpu-a100
+#SBATCH --time=08:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task=16
 #SBATCH --gpus-per-task=1
-#SBATCH --mem-per-cpu=30G
+#SBATCH --mem-per-cpu=5G
 #SBATCH --account=research-me-pe
 #SBATCH --mail-type=FAIL
 
@@ -58,17 +58,22 @@ stop1=$(date +%s)
 echo "Copying done, simulation starting, time elapsed is $(($stop1-$start1)) seconds" >> slurm-${SLURM_JOB_ID}.out 2>&1
 
 ############################################################# TRAINING ############################################################
-srun --ntasks=1 --gpus=0 --output=training.out nequip-train ./input.yaml >> slurm-${SLURM_JOB_ID}.out 2>&1
+srun --output=training.out nequip-train ./input.yaml >> slurm-${SLURM_JOB_ID}.out 2>&1
 echo "Training done" >> slurm-${SLURM_JOB_ID}.out 2>&1
 ####################################################################################################################################
 
+############################################################ EVALUATION  ############################################################
+srun nequip-evaluate --train-dir results/H2O/run-H2O --output predicted.xyz
+echo "Evaluation tests done" >> slurm-${SLURM_JOB_ID}.out 2>&1
+####################################################################################################################################
+
 ############################################################ PRE-DEPLOY ############################################################
-srun --ntasks=1 --gpus=0 --output=pre-deploy.out nequip-deploy build --train-dir results/H2O/run-H2O/ h2o-deployed.pth >> slurm-${SLURM_JOB_ID}.out 2>&1
+srun --output=pre-deploy.out nequip-deploy build --train-dir results/H2O/run-H2O/ h2o-deployed.pth >> slurm-${SLURM_JOB_ID}.out 2>&1
 echo "Deployment done" >> slurm-${SLURM_JOB_ID}.out 2>&1
 ####################################################################################################################################
 
 # Delete old output files, comment out if you want to retain them
-# rm -rf output_files*
+rm -rf output_files*
 mkdir output_files_$run_no
 mv results wandb h2o.rdf log.lammps training.out pre-deploy.out *.dat output_files_$run_no
 
@@ -79,4 +84,3 @@ rm -rf /tmp/${SLURM_JOBID}
 # rm ${SLURM_SUBMIT_DIR}/slurm-${SLURM_JOBID}.out
 
 seff ${SLURM_JOBID}
-sacct --format=JobID,JobName,AllocCPUs,ReqMem,MaxRSS,Elapsed,MaxVMSize,CPUTime,TotalCPU,State --jobs=${SLURM_JOB_ID} >> slurm-${SLURM_JOB_ID}.out
