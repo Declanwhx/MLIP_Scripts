@@ -18,6 +18,12 @@ NOTES:
 	 │       └── build/
 	 │           └── lmp
 	 ├── deepmd
+	 │   ├── deepmd_source/
+	 │   ├── deepmd_venv/
+	 │   ├── lammps/
+	 │   └── bin/
+	 │       └── build/
+	 │           └── lmp
 	 └── nequip
 	     ├── nequip/
 	     ├── pair_nequip/
