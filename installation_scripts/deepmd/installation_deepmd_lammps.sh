@@ -1,12 +1,4 @@
 #!/bin/sh
-#SBATCH --job-name="install_deepmd"
-#SBATCH --partition=gpu-a100
-#SBATCH --time=03:00:00
-#SBATCH --ntasks=1
-#SBATCH --gpus-per-task=1
-#SBATCH --cpus-per-task=6
-#SBATCH --mem-per-cpu=8G
-#SBATCH --account=research-me-pe
 
 # THIS FILE INSTALLS BOTH THE DEEPMD MLIP AND BUILTIN LAMMPS
 
@@ -29,12 +21,6 @@
 # │       └── build/
 # │           └── lmp
 # ├── deepmd
-# │   ├── deepmd_source/
-# │   ├── deepmd_venv/
-# │   ├── lammps/
-# │   └── bin/
-# │       └── build/
-# │           └── lmp
 # └── nequip
 #     ├── nequip/
 #     ├── pair_nequip/
@@ -42,102 +28,85 @@
 #         └── build/
 #             └── lmp
 
-deepmd_vers='v3.0.1'
-deepmd_root=/scratch/dwee/software/deepmd
-deepmd_source_path=/scratch/dwee/software/deepmd/deepmd_source
-deepmd_precompiled_c_path=/scratch/dwee/software/deepmd/libdeepmd_c
-lammps_path=/scratch/dwee/software/deepmd/lammps-stable_29Aug2024_update1
+DEEPMD_PATH=/scratch/dwee/software/deepmd/deepmd_venv/lib/python3.10/site-packages/deepmd
+DEEPMD_SOURCE_PATH=/scratch/dwee/software/deepmd/deepmd_source
+LAMMPS_PATH=/scratch/dwee/software/deepmd/lammps-stable_29Aug2024_update1
+# TORCH_DIR=$(python -c "import torch; print(torch.__path__[0])")/share/cmake/Torch
 
-# ==================================================================
-# 🔧 Load System Modules (ONLY WORKS WITH DELFTBLUE'S A100 NODES!!!)
-# ==================================================================
+# ====================================================================
+# 🔧 Load System Modules (CHANGE YOUR MODULE USE PATH ACCORDINGLY)
+# ====================================================================
+# THESE MODULE USE LINES ARE SO THAT SPACK PACKAGES TAKE PRECEDENCE OVER HPC ONES
+module use /home/dwee/software/spack/share/spack/lmod/linux-rhel8-x86_64/Core
+module use /home/dwee/software/spack/share/spack/lmod/linux-rhel8-x86_64/openmpi/4.1.6-h2uag4k/Core
+
+module purge
+module load DefaultModules
 module load 2024r1
-module load cuda/12.5
-module load cudnn/8.7.0.84-11.8
-module load nccl/2.19.3-1
-
-# WE DO THIS SO THAT THE LOADING OF TENSORFLOW TRIGGERS THE VERSION CHANGE OF THE DEPENDENCIES
-# YOU COULD JUST LOAD THE CHANGED VERSIONS IF YOU WANT A MORE ELEGANT SCRIPT
-module load py-tensorflow/2.16.1 
-module unload py-tensorflow
-
 module load openmpi/4.1.6
-module load cmake/3.27.7
-module load fftw/3.3.10_openmp_True
-
-unset PYTHONPATH  # Ensure the module paths are not interfering
-
-# Set CUDA module paths
-export CUDA_HOME=/beegfs/apps/generic/cuda-12.5-nuybbdj
+module load py-torch/2.1.0
+module load gcc/11.3.0
+module load cmake
 
 cd ../../
 rm -rf deepmd
 mkdir deepmd
 cd deepmd
 
-# ====================
+# ===================================================================
+# 🔍 Use Spack PyTorch (`v6gfbmm`) Only (HPC PyTorch is non DDP) 
+# ===================================================================
+export SPACK_PYTORCH_PATH=$(spack location -i /v6gfbmm)
+export LD_LIBRARY_PATH=$SPACK_PYTORCH_PATH/lib/python3.10/site-packages/torch/lib:$LD_LIBRARY_PATH
+python -c "import torch; print(torch.__file__)"  # Check PyTorch path
+TORCH_DIR=$(python -c "import torch; print(torch.__path__[0])")/share/cmake/Torch
+
+# ========================
 # 🔧 WGET & GIT CLONES
-# ====================
+# ========================
 wget https://github.com/lammps/lammps/archive/stable_29Aug2024_update1.tar.gz
 tar xf stable_29Aug2024_update1.tar.gz
-mkdir -p $lammps_path/build/
+mkdir -p $LAMMPS_PATH/build/
 
 git clone https://github.com/deepmodeling/deepmd-kit.git deepmd_source
-mkdir -p $deepmd_source_path/source/build/
+mkdir -p $DEEPMD_SOURCE_PATH/source/build/
 
-# ============================
+# ================================
 # 🔧 Create Python Environment
-# ============================
-python -m venv deepmd_venv
+# ================================
+python -m venv --system-site-packages deepmd_venv
 source deepmd_venv/bin/activate 
 
 # ========================================
 # 🔧 Install DeePMD-Kit's Python interface
 # ========================================
-cd $deepmd_source_path
+cd $DEEPMD_SOURCE_PATH
 
-pip install --no-cache-dir --force-reinstall tensorflow==2.16.1
-DP_VARIANT=cuda CUDAToolkit_ROOT=${CUDA_HOME} pip install .
+DP_VARIANT=cuda \
+CUDAToolkit_ROOT=${CUDA_PATH} \
+DP_ENABLE_TENSORFLOW=0 \
+DP_ENABLE_PYTORCH=1 \
+PYTORCH_ROOT=${SPACK_PYTORCH_PATH} pip install .
 
-export TF_LIB_DIR=$(python -c "import tensorflow as tf; print(tf.sysconfig.get_lib())")
-export TF_INCLUDE_DIR=$(python -c "import tensorflow as tf; print(tf.sysconfig.get_include())")
-export LD_LIBRARY_PATH=$TF_LIB_DIR:$LD_LIBRARY_PATH
-
-# =====================
-# 🔧 TENSORFLOW TESTING
-# =====================
-echo "Checking TensorFlow GPU detection..."
-python -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
-python -c "import tensorflow as tf; print(tf.sysconfig.get_build_info())"
-
-# ==================
-# 🔧 Install Horovod
-# ==================
-HOROVOD_GPU_OPERATIONS=NCCL \
-HOROVOD_NCCL_HOME=$NCCL_HOME \
-HOROVOD_WITHOUT_GLOO=1 \
-HOROVOD_WITH_MPI=1 \
-HOROVOD_WITH_TENSORFLOW=1 \
-pip install horovod mpi4py
-
-horovodrun --check-build
-
-# =====================================
+#==========================================
 # 🔧 Install DeePMD-Kit's C++ interface
-# =====================================
-cd $deepmd_source_path/source/build
+# =========================================
+cd $DEEPMD_SOURCE_PATH/source/build
 
-DEEPMD_CPP_SETTINGS="-DUSE_TF_PYTHON_LIBS=TRUE"
-DEEPMD_CPP_SETTINGS+=" -DCMAKE_INSTALL_PREFIX=${deepmd_root}"
+DEEPMD_CPP_SETTINGS="-DENABLE_PYTORCH=TRUE"
+DEEPMD_CPP_SETTINGS+=" -DCMAKE_PREFIX_PATH=${SPACK_PYTORCH_PATH}"
+DEEPMD_CPP_SETTINGS+=" -DCMAKE_INSTALL_PREFIX=${DEEPMD_PATH}"
 DEEPMD_CPP_SETTINGS+=" -DUSE_CUDA_TOOLKIT=TRUE"
-DEEPMD_CPP_SETTINGS+=" -DCUDAToolkit_ROOT=${CUDA_HOME}"
+DEEPMD_CPP_SETTINGS+=" -DCUDAToolkit_ROOT=${CUDA_PATH}"
+DEEPMD_CPP_SETTINGS+=" -DCAFFE2_USE_CUDNN=TRUE" 
+DEEPMD_CPP_SETTINGS+=" -DCMAKE_CXX_FLAGS=\"-D_GLIBCXX_USE_CXX11_ABI=1\""
+DEEPMD_CPP_SETTINGS+=" -DTorch_DIR=${TORCH_DIR}"
 
 CMAKE_PREP="cmake $DEEPMD_CPP_SETTINGS .."
 $CMAKE_PREP
 
-make -j $SLURM_CPUS_PER_TASK
+make -j10
 make install
-
 
 # =====================================================================================================================#
 # =================================================LAMMPS INSTALL======================================================#
@@ -145,8 +114,8 @@ make install
 
 make lammps
 
-cd $lammps_path/build
-echo "include(${deepmd_source_path}/source/lmp/builtin.cmake)" >> ../cmake/CMakeLists.txt
+cd $LAMMPS_PATH/build
+echo "include(${DEEPMD_SOURCE_PATH}/source/lmp/builtin.cmake)" >> ../cmake/CMakeLists.txt
 
 # 1) PYTHON -- useful (Required python-dev)
 # 2) KIM -- maybe useful
@@ -193,14 +162,14 @@ done
 
 DEEPMD_SETTINGS="-D LAMMPS_INSTALL_RPATH=ON"
 DEEPMD_SETTINGS+=" -D BUILD_SHARED_LIBS=yes"
-DEEPMD_SETTINGS+=" -D CMAKE_INSTALL_PREFIX=${deepmd_root}"
-DEEPMD_SETTINGS+=" -D CMAKE_INSTALL_FULL_LIBDIR=${deepmd_root}/lib"
+DEEPMD_SETTINGS+=" -D CMAKE_INSTALL_PREFIX=${DEEPMD_PATH}"
+DEEPMD_SETTINGS+=" -D CMAKE_INSTALL_FULL_LIBDIR=${DEEPMD_PATH}/lib"
 
 # Build LAMMPS
 CMAKE_PREP="cmake $ADD_PACKAGES $DEEPMD_SETTINGS ../cmake"
 $CMAKE_PREP
 
-make -j $SLURM_CPUS_PER_TASK
+make -j10
 make install
 
 deactivate
