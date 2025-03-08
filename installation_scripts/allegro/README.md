@@ -21,10 +21,10 @@ NOTES:
 	 ├── deepmd
 	 │   ├── deepmd_source/
 	 │   ├── deepmd_venv/
-	 │   ├── lammps/
-	 │   └── bin/
-	 │       └── build/
-	 │           └── lmp
+	 │   	 └── bin/
+	 │           └── build/
+	 │               └── lmp
+	 │   └── lammps/
 	 └── nequip
 	     ├── nequip/
 	     ├── pair_nequip/
