@@ -9,7 +9,7 @@ NOTES:
 	 │   ├── allegro/
 	 │       └── installation_allegro_lammps.sh
 	 │   ├── deepmd/
-	 │       └── installation_deepmd.sh
+	 │       └── installation_deepmd_lammps.sh
 	 │   └── nequip/
 	 │       └── installation_nequip_lammps.sh
 	 ├── allegro
