@@ -1,4 +1,12 @@
 #!/bin/sh
+#SBATCH --job-name="install_deepmd"
+#SBATCH --partition=gpu-a100-small
+#SBATCH --time=01:00:00
+#SBATCH --ntasks=1
+#SBATCH --gpus-per-task=1
+#SBATCH --cpus-per-task=10
+#SBATCH --mem-per-cpu=5G
+#SBATCH --account=research-me-pe
 
 # THIS FILE INSTALLS BOTH THE DEEPMD MLIP AND BUILTIN LAMMPS
 
@@ -21,6 +29,12 @@
 # │       └── build/
 # │           └── lmp
 # ├── deepmd
+# │   ├── deepmd_source/
+# │   ├── deepmd_venv/
+# │   ├── lammps/
+# │   └── bin/
+# │       └── build/
+# │           └── lmp
 # └── nequip
 #     ├── nequip/
 #     ├── pair_nequip/
@@ -31,7 +45,6 @@
 DEEPMD_PATH=/scratch/dwee/software/deepmd/deepmd_venv/lib/python3.10/site-packages/deepmd
 DEEPMD_SOURCE_PATH=/scratch/dwee/software/deepmd/deepmd_source
 LAMMPS_PATH=/scratch/dwee/software/deepmd/lammps-stable_29Aug2024_update1
-# TORCH_DIR=$(python -c "import torch; print(torch.__path__[0])")/share/cmake/Torch
 
 # ====================================================================
 # 🔧 Load System Modules (CHANGE YOUR MODULE USE PATH ACCORDINGLY)
