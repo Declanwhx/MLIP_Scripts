@@ -2,7 +2,7 @@ NOTES:
 
 1. (IMPORTANT) NOTE THAT WHEN YOU SPACK INSTALL PYTORCH, IT WILL SHOW AN ERROR ABOUT FAILING TO LOAD/FIND OPENBLAS/0.3.24, THIS IS CAUSED BY THE UNUSUAL APPENDATION OF "_threads_openmp" TO THE
    MODULE NAME. I PROVIDE THE SOLUTION IN THE FOLLOWING STEPS:
-	1. vim /home/dwee/software/spack/share/spack/lmod/linux-rhel8-x86_64/openmpi/4.1.6-h2uag4k/Core/py-torch/2.1.0.lua
+	1. vim ~/software/spack/share/spack/lmod/linux-rhel8-x86_64/openmpi/4.1.6-h2uag4k/Core/py-torch/2.1.0.lua
 	2. look for the line containing "depends_on("openblas/0.3.24")"
 	3. modify the line found in (2) to "depends_on("openblas/0.3.24_threads_openmp")"
 
