@@ -48,7 +48,7 @@ nequip_pair_vers=main
 lammps_vers=stable
 
 # Location env variable. PLEASE CHANGE THIS TO YOUR INTENDED INSTALL LOCATION.
-lammps_path=/scratch/dwee/software/nequip_lammps/lammps_nequip
+lammps_path=/scratch/$USER/software/nequip/lammps_nequip
 
 # ===============================================================
 # 🔧 Load System Modules (ONLY AVAILABLE ON DELFTBLUE A100 NODES)
@@ -80,14 +80,14 @@ export LIBRARY_PATH=$CUDNN_HOME/lib:$LIBRARY_PATH
 # ===========================
 # 🔧 Create Conda Environment
 # ===========================
-conda remove -n nequip--all -y
+conda remove -n nequip --all -y
 conda create -n nequip python=3.10 -y
 conda activate nequip
 
 cd ../../
-rm -rf nequip_lammps
-mkdir nequip_lammps
-cd nequip_lammps
+rm -rf nequip
+mkdir nequip
+cd nequip
 
 # =======================
 # 🔧 Install Dependencies
