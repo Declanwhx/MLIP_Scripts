@@ -48,7 +48,7 @@ nequip_vers=0.6.1
 lammps_vers=stable
 
 # Location env variable
-lammps_path=/scratch/dwee/software/allegro_lammps/lammps_allegro
+lammps_path=/scratch/$USER/software/allegro_lammps/lammps_allegro
 
 # ===============================================================
 # 🔧 Load System Modules (ONLY AVAILABLE ON DELFTBLUE A100 NODES)
