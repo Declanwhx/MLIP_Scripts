@@ -5,7 +5,7 @@ NOTES:
    THANKS TO CHATGPT, THIS IS AUTOMATICALLY DONE IF YOU SIMPLY RUN THE INSTALL SCRIPT FOR PYTORCH. FOR THE CURIOUS, I PROVIDE THE SOLUTION IN THE FOLLOWING STEPS:
 	1. vim ~/software/spack/share/spack/lmod/linux-rhel8-x86_64/openmpi/4.1.6-h2uag4k/Core/py-torch/2.1.0.lua
 	2. look for the line containing "depends_on("openblas/0.3.24")"
-	3. modify the line found in (2) to "depends_on("openblas/0.3.24_threads_openmp")"
+	3. modify the line found in (ii) to "depends_on("openblas/0.3.24_threads_openmp")"
 
 3. (IMPORTANT) TAKE NOTE THAT THE LMP EXECUTABLE FOR DEEPMD IS IN BIN/BUILD/LMP AND NOT IN LAMMPS. REFER TO THE DIRECTORY TREE BELOW.
 
