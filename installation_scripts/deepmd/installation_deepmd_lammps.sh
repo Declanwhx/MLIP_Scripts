@@ -42,6 +42,7 @@
 #         └── build/
 #             └── lmp
 
+# CHANGE THESE ACCORDINGLY
 DEEPMD_PATH=/scratch/dwee/software/deepmd/deepmd_venv/lib/python3.10/site-packages/deepmd
 DEEPMD_SOURCE_PATH=/scratch/dwee/software/deepmd/deepmd_source
 LAMMPS_PATH=/scratch/dwee/software/deepmd/lammps-stable_29Aug2024_update1
@@ -50,8 +51,8 @@ LAMMPS_PATH=/scratch/dwee/software/deepmd/lammps-stable_29Aug2024_update1
 # 🔧 Load System Modules (CHANGE YOUR MODULE USE PATH ACCORDINGLY)
 # ====================================================================
 # THESE MODULE USE LINES ARE SO THAT SPACK PACKAGES TAKE PRECEDENCE OVER HPC ONES
-module use /home/dwee/software/spack/share/spack/lmod/linux-rhel8-x86_64/Core
-module use /home/dwee/software/spack/share/spack/lmod/linux-rhel8-x86_64/openmpi/4.1.6-h2uag4k/Core
+module use ~/software/spack/share/spack/lmod/linux-rhel8-x86_64/Core
+module use ~/software/spack/share/spack/lmod/linux-rhel8-x86_64/openmpi/4.1.6-h2uag4k/Core
 
 module purge
 module load DefaultModules
