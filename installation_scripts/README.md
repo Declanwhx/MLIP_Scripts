@@ -41,10 +41,9 @@
    ```bash
    alias cleanenv='/scratch/dwee/software/cleaner.sh'
    ```
-3. installation_spack.sh allows for the installation of Spack. The installation will download v0.21.3 of Spack which is the recommended version by the DelftsBlue
-   Admins.
+3. installation_spack.sh allows for the installation of Spack. The installation will download v0.21.3 of Spack which is the recommended version in the DelftsBlue documentation.
    
-5. If you already have Spack installed, please make sure that you have copied the configuration files provided by the DelftsBlue Admins, this ensures that for any package you install with Spack, they build upon the modules already available 
+5. If you already have Spack installed, please make sure that you have copied the configuration files provided by the DelftsBlue Admins, this ensures that for any packages you install with Spack, they build upon the modules already available 
    on DelftsBlue. If you haven't done so, you can do so with:
    ```bash
    cp /projects/unsupported/spack2024/etc/spack/*.yaml ${SPACK_ROOT}/etc/spack/
