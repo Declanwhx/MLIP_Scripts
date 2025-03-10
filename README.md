@@ -12,10 +12,12 @@ The scripts provided in this repository enable the installation and execution of
 ```
   
 ```bash
-mkdir -p $HOME/software
-mkdir -p $HOME/simulation
 mkdir -p /scratch/$USER/software
 mkdir -p /scratch/$USER/simulation
+```
+
+```bash
+git clone
 ```
 
 2. By default, the installation scripts use the scratch directory ($SCRATCH) for all installations due to storage constraints. However, it should be possible to modify the scripts to place 	 
