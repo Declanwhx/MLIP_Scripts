@@ -1,12 +1,23 @@
-NOTES:
+## NOTES:
 
-1. IT IS POSSIBLE TO COMBINE BOTH RUN SCRIPTS, HOWEVER, I DO NOT RECOMMEND DOING SO AS TRAINING TAKES A LONG TIME, ESPECIALLY FOR 
-   COMPLEX MODELS. THE USER HAS TO FIGURE OUT THE COMPLEXITY OF THE MODEL BASED ON THE DESIRED OUTPUTS. RECOMMENDATIONS ARE GIVEN
-   BY THE CREATORS OF THE ALLEGRO MLIP IN THEIR OWN CONFIGS.YAML FILE - https://github.com/mir-group/nequip/blob/main/configs/full.yaml
+1. **Combining Run Scripts**
+   - While it is technically possible to combine both run scripts, **it is not recommended**.  
+   - Training, especially for complex models, can take a significant amount of time.  
+   - Users should assess the **model complexity** based on their desired outputs.  
+   - The creators of the Allegro MLIP provide recommendations in their `configs.yaml` file:  
+     🔗 [Nequip Full Config](https://github.com/mir-group/nequip/blob/main/configs/full.yaml)
 
-2. FOR TRAINING, I HIGHLY RECOMMEND USING MORE CPU CORES, THIS IS DUE TO THE IMPLEMENTATION OF DATA PARSING PARALLELIZATION 
-   FROM 0.5.5 ONWARDS. REFER TO THE FOLLOWING DISCUSSION - https://github.com/mir-group/nequip/discussions/182
-   FOR A DESCRIPTION OF THIS. ALTERNATIVELY, ONE CAN ALSO REFER TO THE DOCUMENTATION OF 0.5.5 TO BETTER UNDERSTAND THE UPDATE.
+2. **CPU Usage for Training**
+   - Using **more CPU cores** is highly recommended for training due to the implementation of data parsing 
+     parallelization from **version 0.5.5 onwards**
+   - For more details, refer to the following discussion:  
+     🔗 [mir-group/nequip#182](https://github.com/mir-group/nequip/issues/182)  
+   - Alternatively, review the **0.5.5 documentation** for a deeper understanding of the update.
 
-3. IF YOU INTEND TO HAVE SOME TEST SETS, PLEASE ENSURE THAT IN YOUR INPUT.YAML FILE, THE SUM OF YOUR TRAINING + VALIDATION DATASETS
-   DO NOT ADD UP TO 100%, YOU NEED TO LEAVE SOME FOR TESTING. TESTING IS DONE BY THE NEQUIP-EVALUATE COMMAND.
+3. **Managing Training, Validation, and Test Sets**
+   - If you plan to create test sets, ensure that in your `input.yaml` file,  
+     **the sum of training and validation datasets does not reach 100%**.  
+   - You must leave some data aside for **testing**.  
+   - Testing is performed using the following command:
+     ```bash
+     nequip-evaluate
