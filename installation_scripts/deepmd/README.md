@@ -19,42 +19,9 @@
       depends_on("openblas/0.3.24_threads_openmp")
       ```
 
-2. **(IMPORTANT)** The `lmp` executable for DeepMD is located in bin/build/ and **not** inside the `lammps/` directory. Refer to the directory tree below.
+2. **(IMPORTANT)** The `lmp` executable for DeepMD is located in bin/build/ and **not** inside the `lammps/` directory. Refer to the directory tree.
 
-3. Clone the `installation_scripts` folder to your `software/` directory and run the installation script directly. There is no need to move the script around, as it will automatically navigate to the correct directories.
+3. The installation script provided **already includes pre-set versions that are known to work**. You are free to try other versions, but compatibility is not guaranteed.
 
-### Directory Structure:
-```
-	 software/
-	 ├── installation_scripts/
-	 │   ├── allegro/
-	 │       └── installation_allegro_lammps.sh
-	 │   ├── deepmd/
-	 │       └── installation_deepmd_lammps.sh
-	 │   └── nequip/
-	 │       └── installation_nequip_lammps.sh
-	 ├── allegro
-	 │   ├── allegro/
-	 │   ├── pair_allegro/
-	 │   └── lammps_allegro/
-	 │       └── build/
-	 │           └── lmp
-	 ├── deepmd
-	 │   ├── deepmd_source/
-	 │   ├── deepmd_venv/
-	 │   	 └── bin/
-	 │           └── build/
-	 │               └── lmp
-	 │   └── lammps/
-	 └── nequip
-	     ├── nequip/
-	     ├── pair_nequip/
-	     └── lammps_nequip/
-	         └── build/
-	             └── lmp
-```
-
-4. The installation script provided **already includes pre-set versions that are known to work**. You are free to try other versions, but compatibility is not guaranteed.
-
-5. If running this script on other HPC clusters, ensure that you replace the loaded modules based on the available software and dependencies on your system.
+4. If running this script on other HPC clusters, ensure that you replace the loaded modules based on the available software and dependencies on your system.
 
