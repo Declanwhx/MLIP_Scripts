@@ -37,4 +37,4 @@ mv MLIP_Scripts/run_scripts /scratch/$USER/simulation
    different LAMMPS builds within the same source directory (excluding DeepMD) to save some space.
 
 3. Additionally, users may explore the possibility of running NequIP using Allegro, as Allegro is simply an extension of NequIP. This can be done by specifying the NequIP builders in the 
-   input.yaml script instead of the default Allegro setup.
+   input.yaml script instead of the default Allegro setup. Pair_allegro and Pair_nequip are not interexachangeable.
