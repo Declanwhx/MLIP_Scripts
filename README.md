@@ -1,8 +1,6 @@
-THE SCRIPTS ATTACHED IN THIS REPOSITORY ALLOWS ONE TO INSTALL THE MLIPS AND RUN THE MLIPS. THESE SCRIPTS WORK BY DEFAULT.
-HOWEVER, IT IS EXPECTED THAT THE USER LOOKS THROUGH SOME OF THE PARAMETERS CAREFULLY AND DECIDES IF ALTERATIONS ARE NECESSARY, I.E., NO. OF GPUS/CPUS USED, INPUT HYPERPARAMETERS, ETC.
+The scripts provided in this repository enable the installation and execution of MLIPs. These scripts work by default; however, users are expected to review certain parameters carefully and modify them if necessary. Key aspects that may require adjustments include the number of GPUs/CPUs used, input hyperparameters, and other configurations.
 
-1. THE USERS OF THESE SCRIPTS SHOULD HAVE SOFTWARE AND SIMULATION FOLDERS (THE LAYOUT OF EACH OF THESE FOLDERS WILL BE FURTHER ELABORATED UPON IN THEIR RESPECTIVE SECTIONS)
-   IN THEIR HOME/SCRATCH DIRECTORY:
+1. Users of these scripts should have the following software and simulation directories in their home ($HOME) or scratch ($SCRATCH) directory:
    
 ```
 	 $HOME/
@@ -14,7 +12,8 @@ HOWEVER, IT IS EXPECTED THAT THE USER LOOKS THROUGH SOME OF THE PARAMETERS CAREF
 ```
   
 
-2. IN MY INSTALLATION SCRIPTS, I HAVE CHOSEN THE SCRATCH DIRECTORY FOR ALL INSTALLATIONS DUE TO THE SIZE CONSTRAINTS. IT SHOULD BE POSSIBLE TO ADJUST THE SCRIPTS TO HAVE THE DIFFERENT LAMMPS 
-   BUILDS CONTAINED IN THE SAME SOURCE DIRECTORY (NOT INCLUDING DEEPMD). MOREOVER, ONE CAN EXPLORE THE POSSIBILITY OF USING ALLEGRO TO RUN NEQUIP, THIS SHOULD BE POSSIBLE SINCE ALLEGRO IS SIMPLY 
-   AN EXTENSION OF NEQUIP AND YOU SHOULD BE ABLE TO DO SO SIMPLY BY USING THE NEQUIP BUILDERS IN YOUR INPUT.YAML SCRIPT INSTEAD. ACCOUNTING FOR ALL OF THESE THINGS, ONE SHOULD HAVE SUFFICIENT 
-   SPACE IN $HOME.
+2. By default, the installation scripts use the scratch directory ($SCRATCH) for all installations due to storage constraints. However, it should be possible to modify the scripts to place 	 
+   different LAMMPS builds within the same source directory (excluding DeepMD) to save some space.
+
+3. Additionally, users may explore the possibility of running NequIP using Allegro, as Allegro is simply an extension of NequIP. This can be achieved by specifying the NequIP builders in the 
+   input.yaml script instead.
