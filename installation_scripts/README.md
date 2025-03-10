@@ -1,6 +1,5 @@
 ### NOTES:
-1. If you followed the instructions in the main folder, you should have the `installation_scripts` folder in your `software` directory, run the installation scripts from here. There is no need to move the script anywhere else, as it will 
-   automatically navigate out of its folder to install in the `software` directory, this is shown in the directory structure.
+1. If you followed the instructions in the main folder, you should have the `installation_scripts` folder in your `software` directory, run the installation scripts from their respective folders. There is no need to move the script anywhere else, as it will automatically navigate out of its folders to install in the `software` directory, this is shown in the directory structure.
 
 ### Directory Structure:
 
