@@ -21,3 +21,4 @@
    - Testing is performed using the following command:
      ```bash
      nequip-evaluate
+     ```
