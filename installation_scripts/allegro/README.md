@@ -1,4 +1,6 @@
 ### NOTES:
+1. Clone the `installation_scripts` folder to your `software` directory and run the installation script directly.  
+    There is no need to move the script around, as it will automatically navigate out of its folder to install in the `software` directory.
 
 ### Directory Structure:
 
