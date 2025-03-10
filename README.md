@@ -11,6 +11,12 @@ The scripts provided in this repository enable the installation and execution of
 	 └── simulation
 ```
   
+```bash
+mkdir -p $HOME/software
+mkdir -p $HOME/simulation
+mkdir -p /scratch/$USER/software
+mkdir -p /scratch/$USER/simulation
+```
 
 2. By default, the installation scripts use the scratch directory ($SCRATCH) for all installations due to storage constraints. However, it should be possible to modify the scripts to place 	 
    different LAMMPS builds within the same source directory (excluding DeepMD) to save some space.
