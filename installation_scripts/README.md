@@ -1,4 +1,39 @@
-1. cleaner.sh has been attached so that you can easily clean you pip and conda caches by attaching the script to an alias in your .bashrc file
+### NOTES:
+1. Clone the `installation_scripts` folder to your `software` directory and run the installation script directly.  
+    There is no need to move the script around, as it will automatically navigate out of its folder to install in the `software` directory.
+
+### Directory Structure:
+
+```
+	 software/
+	 ├── installation_scripts/
+	 │   ├── allegro/
+	 │       └── installation_allegro_lammps.sh
+	 │   ├── deepmd/
+	 │       └── installation_deepmd_lammps.sh
+	 │   └── nequip/
+	 │       └── installation_nequip_lammps.sh
+	 ├── allegro
+	 │   ├── allegro/
+	 │   ├── pair_allegro/
+	 │   └── lammps_allegro/
+	 │       └── build/
+	 │           └── lmp
+	 ├── deepmd
+	 │   ├── deepmd_source/
+	 │   ├── deepmd_venv/
+	 │   	 └── bin/
+	 │           └── build/
+	 │               └── lmp
+	 │   └── lammps/
+	 └── nequip
+	     ├── nequip/
+	     ├── pair_nequip/
+	     └── lammps_nequip/
+	         └── build/
+	             └── lmp
+```
+2. cleaner.sh has been attached so that you can easily clean you pip and conda caches by attaching the script to an alias in your .bashrc file
    ```bash
    vim ~/.bashrc
    ```
@@ -6,4 +41,10 @@
    ```bash
    alias cleanenv='/scratch/dwee/software/cleaner.sh'
    ```
-3. installation_spack.sh allows for the installation of spack as well as a patch that ensures packages already available in the HPC are used and built upon.
+3. installation_spack.sh allows for the installation of Spack. The installation will download v0.21.3 of Spack which is the recommended version by the DelftsBlue
+   Admins.
+4. If you already have Spack installed, please make sure that you have copied the configuration files provided by the DelftsBlue Admins, this ensures
+   that for whatever packages you install with Spack, they build upon the modules already available on DelftsBlue. If you haven't done so, you can do so with:
+   ```bash
+   cp /projects/unsupported/spack2024/etc/spack/*.yaml ${SPACK_ROOT}/etc/spack/
+   ```
