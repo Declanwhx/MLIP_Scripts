@@ -4,7 +4,7 @@
 #SBATCH --time=01:00:00
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-task=1
-#SBATCH --cpus-per-task=10
+#SBATCH --cpus-per-task=8
 #SBATCH --mem-per-cpu=5G
 #SBATCH --account=research-me-pe
 
@@ -119,7 +119,7 @@ DEEPMD_CPP_SETTINGS+=" -DTorch_DIR=${TORCH_DIR}"
 CMAKE_PREP="cmake $DEEPMD_CPP_SETTINGS .."
 $CMAKE_PREP
 
-make -j10
+make -j${SLURM_CPUS_PER_TASK}
 make install
 
 # =====================================================================================================================#
@@ -183,7 +183,7 @@ DEEPMD_SETTINGS+=" -D CMAKE_INSTALL_FULL_LIBDIR=${DEEPMD_PATH}/lib"
 CMAKE_PREP="cmake $ADD_PACKAGES $DEEPMD_SETTINGS ../cmake"
 $CMAKE_PREP
 
-make -j10
+make -j${SLURM_CPUS_PER_TASK}
 make install
 
 deactivate
