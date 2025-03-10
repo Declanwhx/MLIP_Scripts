@@ -104,7 +104,7 @@ edge_eng_mlp_initialization: uniform
 # This can often be easier to work with, simply make sure the ASE Atoms object
 # has a calculator for which atoms.get_potential_energy() and atoms.get_forces() are defined
 dataset: ase
-dataset_file_name: ./input_files/mlip_input_data/combined_training.extxyz                                                       # need to be a format accepted by ase.io.read
+dataset_file_name: ./input_files/combined_training.extxyz                                                       # need to be a format accepted by ase.io.read
 ase_args:
   format: extxyz
 
