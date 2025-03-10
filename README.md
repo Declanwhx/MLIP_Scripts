@@ -3,7 +3,7 @@
 The scripts in this repository facilitate the **installation** and **execution** of MLIPs.  
 By default, they work without modifications, but users should carefully review and adjust specific parameters as needed.  
 Key settings that may require customization include:  
-- **Number of GPUs/CPUs** used  
+- **Number of GPUs/CPUs**  
 - **Input hyperparameters**  
 - **Other relevant configurations**  
 
