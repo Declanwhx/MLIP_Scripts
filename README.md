@@ -17,7 +17,9 @@ mkdir -p /scratch/$USER/simulation
 ```
 
 ```bash
-git clone
+git clone https://github.com/Declanwhx/MLIP_Scripts.git
+mv MLIP_Scripts/installation_scripts /scratch/$USER/software
+mv MLIP_Scripts/run_scripts /scratch/$USER/simulation
 ```
 
 2. By default, the installation scripts use the scratch directory ($SCRATCH) for all installations due to storage constraints. However, it should be possible to modify the scripts to place 	 
