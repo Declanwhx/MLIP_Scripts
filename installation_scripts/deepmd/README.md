@@ -1,17 +1,29 @@
-NOTES: 
+## NOTES:
 
-1. (IMPORTANT) NOTE THAT WHEN YOU SPACK INSTALL PYTORCH, THE INSTALLATION WILL RUN WITH NO ISSUES. HOWEVER, WHEN ATTEMPTING TO LOAD THE NEWLY INSTALLED MODULE, 
-   IT WILL INDICATE AN ERROR ABOUT FAILING TO LOAD/FIND OPENBLAS/0.3.24, THIS IS CAUSED BY THE UNUSUAL APPENDATION OF "_threads_openmp" TO THE HPC'S MODULE NAME.
-   THANKS TO CHATGPT, THIS IS AUTOMATICALLY DONE IF YOU SIMPLY RUN THE INSTALL SCRIPT FOR PYTORCH. FOR THE CURIOUS, I PROVIDE THE SOLUTION IN THE FOLLOWING STEPS:
-	1. vim ~/software/spack/share/spack/lmod/linux-rhel8-x86_64/openmpi/4.1.6-h2uag4k/Core/py-torch/2.1.0.lua
-	2. look for the line containing "depends_on("openblas/0.3.24")"
-	3. modify the line found in (ii) to "depends_on("openblas/0.3.24_threads_openmp")"
+1. **(IMPORTANT)** When installing PyTorch via Spack, the installation will complete without errors. However, attempting to load the newly installed module may result in an error related to 
+   missing `openblas/0.3.24`. This occurs due to the unusual appending of `_threads_openmp` to the HPC's module name.  
 
-3. (IMPORTANT) TAKE NOTE THAT THE LMP EXECUTABLE FOR DEEPMD IS IN BIN/BUILD/LMP AND NOT IN LAMMPS. REFER TO THE DIRECTORY TREE BELOW.
+   Thanks to ChatGPT, this issue is automatically handled if you simply run the installation script for PyTorch. Should this fail, or for those interested in manually resolving it, follow 
+   these steps:
 
-4. CLONE THE "INSTALLATION_SCRIPTS" FOLDER TO YOUR SOFTWARE FOLDER AND JUST RUN THE INSTALLATION SCRIPT, THERE IS NO NEED TO MOVE THE SCRIPT 
-   AROUND, IT WILL NAVIGATE OUT OF THIS FOLDER TO INSTALL IN THE SOFTWARE FOLDER.
+   1. Open the PyTorch module file:
+      ```bash
+      vim ~/software/spack/share/spack/lmod/linux-rhel8-x86_64/openmpi/4.1.6-h2uag4k/Core/py-torch/2.1.0.lua
+      ```
+   2. Locate the line containing:
+      ```lua
+      depends_on("openblas/0.3.24")
+      ```
+   3. Modify it to:
+      ```lua
+      depends_on("openblas/0.3.24_threads_openmp")
+      ```
 
+2. **(IMPORTANT)** The `lmp` executable for DeepMD is located in bin/build/ and **not** inside the `lammps/` directory. Refer to the directory tree below.
+
+3. Clone the `installation_scripts` folder to your `software/` directory and run the installation script directly. There is no need to move the script around, as it will automatically navigate to the correct directories.
+
+### Directory Structure:
 ```
 	 software/
 	 ├── installation_scripts/
@@ -42,7 +54,7 @@ NOTES:
 	             └── lmp
 ```
 
-4. THE INSTALLATION SCRIPT PROVIDED ALREADY HAS THE VERSIONS THAT WORK SET, FEEL FREE TO TRY OTHER VERSIONS IF YOU WISH, HOWEVER, THEY MAY NOT 
-   WORK.
+4. The installation script provided **already includes pre-set versions that are known to work**. You are free to try other versions, but compatibility is not guaranteed.
 
-5. IF RUNNING THIS SCRIPT ON OTHER HPC CLUSTERS, YOU HAVE TO REPLACE THE LOADED MODULES BASED ON WHAT IS AVAILABLE TO YOU.
+5. If running this script on other HPC clusters, ensure that you replace the loaded modules based on the available software and dependencies on your system.
+
