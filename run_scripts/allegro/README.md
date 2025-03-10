@@ -25,14 +25,14 @@ project/
 
 ## 🛠️ Run Script Best Practices
 - **Avoid combining training and simulation run scripts** unless necessary.
-- Training can be time-intensive, particularly for complex models.
+- Training can be time-intensive, particularly for complex models and retraining these models are unneccessary.
 - The **Allegro MLIP** developers provide configuration recommendations:  
   🔗 [Nequip Full Config](https://github.com/mir-group/nequip/blob/main/configs/full.yaml)
 
 ---
 
 ## 🖥️ CPU Usage for Training
-- Using **multiple CPU cores** is recommended due to improved **data parsing parallelization** (from version **0.5.5+**).
+- Using **multiple CPU cores** is recommended due to improved speed from **data parsing parallelization** (from version **0.5.5+**).
 - For details, see:  
   🔗 [Discussion: mir-group/nequip#182](https://github.com/mir-group/nequip/issues/182)  
   or consult the **0.5.5+ documentation**.
@@ -40,7 +40,7 @@ project/
 ---
 
 ## 📊 Training, Validation & Test Sets
-- Ensure that the **sum of training + validation data is < 100%** to leave space for testing.
+- Ensure that the **sum of training + validation data is < 100%** to leave datasets for testing.
 - To evaluate trained models, use:
   ```bash
   nequip-evaluate
