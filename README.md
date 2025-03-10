@@ -23,6 +23,8 @@ Users should ensure that the following **software** and **simulation** directori
 
 To create these directories, run:
 ```bash
+mkdir -p ~/software
+mkdir -p ~/simulation
 mkdir -p /scratch/$USER/software
 mkdir -p /scratch/$USER/simulation
 ```
