@@ -42,6 +42,8 @@
 #         └── build/
 #             └── lmp
 
+deepmd_vers="v3.0.2"
+
 # CHANGE THESE ACCORDINGLY
 DEEPMD_PATH=/scratch/$USER/software/deepmd/deepmd_venv/lib/python3.10/site-packages/deepmd
 DEEPMD_SOURCE_PATH=/scratch/$USER/software/deepmd/deepmd_source
@@ -82,7 +84,7 @@ wget https://github.com/lammps/lammps/archive/stable_29Aug2024_update1.tar.gz
 tar xf stable_29Aug2024_update1.tar.gz
 mkdir -p $LAMMPS_PATH/build/
 
-git clone https://github.com/deepmodeling/deepmd-kit.git deepmd_source
+git clone --branch ${deepmd_vers} https://github.com/deepmodeling/deepmd-kit.git deepmd_source
 mkdir -p $DEEPMD_SOURCE_PATH/source/build/
 
 # ================================
