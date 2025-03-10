@@ -10,26 +10,6 @@
 #SBATCH --account=research-me-pe
 #SBATCH --mail-type=FAIL
 
-# Expected directory structure:
-#
-# project/
-# ├── input_files/
-# │   ├── si.data
-# │   └── Si_data
-# │       └── /Si_data
-# ├── input.yaml
-# ├── inputlammps
-# └── run_allegro.sh
-
-# project -> e.g H2O
-# inputlammps -> LAMMPS input settings file
-# input.yaml -> Allegro input settings file
-# si.data -> Initializing snapshot of system for MD
-# Si_data -> Training and validation data for Allegro
-
-# Change run no. accordingly
-run_no=$1
-
 lmp_path=/scratch/dwee/software/allegro_lammps/lammps_allegro/build
 
 # Load Modules
@@ -73,9 +53,9 @@ echo "Deployment done" >> slurm-${SLURM_JOB_ID}.out 2>&1
 ####################################################################################################################################
 
 # Delete old output files, comment out if you want to retain them
-rm -rf output_files*
-mkdir output_files_$run_no
-mv results wandb h2o.rdf log.lammps training.out pre-deploy.out *.dat output_files_$run_no
+rm -rf training_files
+mkdir training_files
+mv results wandb h2o.rdf log.lammps training.out pre-deploy.out *.dat training_files
 
 echo "Simulation done, copying back" >> slurm-${SLURM_JOB_ID}.out 2>&1
 # copy back
