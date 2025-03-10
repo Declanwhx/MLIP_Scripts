@@ -1,7 +1,9 @@
-NOTES: 
+### NOTES:
 
-1. CLONE THE "INSTALLATION_SCRIPTS" FOLDER TO YOUR SOFTWARE FOLDER AND JUST RUN THE INSTALLATION SCRIPT, THERE IS NO NEED TO MOVE THE SCRIPT 
-   AROUND, IT WILL NAVIGATE OUT OF THIS FOLDER TO INSTALL IN THE SOFTWARE FOLDER. DIRECTORY TREE:
+1. Clone the `installation_scripts` folder to your `software` directory and run the installation script directly.  
+   There is no need to move the script around, as it will automatically navigate out of its folder to install in the `software` directory.
+
+### Directory Structure:
 
 ```
 	 software/
@@ -31,9 +33,11 @@ NOTES:
 	     └── lammps_nequip/
 	         └── build/
 	             └── lmp
-```	
+```
 
-2. THE INSTALLATION SCRIPT PROVIDED ALREADY HAS THE VERSIONS THAT WORK SET, FEEL FREE TO TRY OTHER VERSIONS IF YOU WISH, HOWEVER, THEY MAY NOT 
-   WORK.
+2. The installation script provided already includes **pre-set versions** that are known to work.  
+   You may try different versions if desired, but compatibility is not guaranteed.
 
-3. IF RUNNING THIS SCRIPT ON OTHER HPC CLUSTERS, YOU HAVE TO REPLACE THE LOADED MODULES BASED ON WHAT IS AVAILABLE TO YOU.
+3. If running this script on another HPC cluster, ensure that you replace the loaded modules based on the available
+   software and dependencies on your system.
+
