@@ -11,11 +11,11 @@ project/
 ├── inputlammps
 └── run_allegro.sh
 ```
-- project -> e.g H2O
-- inputlammps -> LAMMPS input settings file
-- input.yaml -> Allegro input settings file
-- si.data -> Initializing snapshot of system for MD
-- Si_data -> Training and validation data for Allegro
+   - project -> e.g H2O
+   - inputlammps -> LAMMPS input settings file
+   - input.yaml -> Allegro input settings file
+   - si.data -> Initializing snapshot of system for MD
+   - Si_data -> Training and validation data for Allegro
 
 2. **Combining Run Scripts**
    - While it is technically possible to combine both run scripts, **it is not recommended**.  
