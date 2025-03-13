@@ -31,12 +31,10 @@ mkdir -p /scratch/$USER/simulation
 Next, clone the repository and move the necessary scripts:
 ```bash
 git clone https://github.com/Declanwhx/MLIP_Scripts.git
-mv MLIP_Scripts/installation_scripts /scratch/$USER/software
-mv MLIP_Scripts/run_scripts /scratch/$USER/simulation
+mv MLIP_Scripts/installation_scripts ~/software
+mv MLIP_Scripts/run_scripts ~/simulation
 ```
 
-2. By default, the installation scripts use the scratch directory ($SCRATCH) for all installations due to space constraints. However, it should be possible to modify the scripts to place 	 
-   different LAMMPS builds within the same source directory (excluding DeepMD) to save some space.
+2. By default, the installation scripts use the home directory ($HOME) for all installations. However, should you run into space constraints, you could amend the paths in the installation scripts to install in the scratch folder instead. Alternatively, the LAMMPS source repo could be shared between Allegro and Nequip to save space (Pair_Allegro and Pair_Nequip are different, so different builds are required).
 
-3. Additionally, users may explore the possibility of running NequIP using Allegro, as Allegro is simply an extension of NequIP. This can be done by specifying the NequIP builders in the 
-   input.yaml script instead of the default Allegro setup. Pair_allegro and Pair_nequip are not interexachangeable.
+3. Additionally, users may explore the possibility of running NequIP using Allegro, as Allegro is simply an extension of NequIP. This can be done by specifying the NequIP builders in the input.yaml script instead of the default Allegro setup.
