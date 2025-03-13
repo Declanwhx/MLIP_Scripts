@@ -39,7 +39,7 @@
    ```
    and then add the following line to the file:
    ```bash
-   alias cleanenv='/scratch/dwee/software/cleaner.sh'
+   alias cleanenv='~/software/cleaner.sh'
    ```
 3. installation_spack.sh allows for the installation of Spack. The script will install the recommended version in the DelftsBlue documentation, Spack v0.21.3 .
    
