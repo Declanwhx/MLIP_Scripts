@@ -1,4 +1,7 @@
 module load 2024r1 python
+
+cd ..
+
 git clone -b v0.21.3 https://github.com/spack/spack
 
 source ${HOME}/software/spack/share/spack/setup-env.sh
