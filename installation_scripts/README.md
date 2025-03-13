@@ -9,8 +9,9 @@
 	 │   │   └── installation_allegro_lammps.sh
 	 │   ├── deepmd/
 	 │   │   └── installation_deepmd_lammps.sh
-	 │   └── nequip/
-	 │       └── installation_nequip_lammps.sh
+	 │   ├── nequip/
+	 │   │   └── installation_nequip_lammps.sh
+         │   └── installation_spack.sh
 	 ├── allegro
 	 │   ├── allegro/
 	 │   ├── pair_allegro/
