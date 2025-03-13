@@ -1,133 +1,99 @@
 #!/bin/sh
 #SBATCH --job-name="install_allegro"
 #SBATCH --partition=gpu-a100-small
-#SBATCH --time=02:00:00
+#SBATCH --time=01:00:00
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-task=1
 #SBATCH --cpus-per-task=8
-#SBATCH --mem-per-cpu=8G
+#SBATCH --mem-per-cpu=5G
 #SBATCH --account=research-me-pe
 
-# THIS SCRIPT INSTALLS BOTH ALLEGRO AND THE PAIR_ALLEGRO LAMMPS
+# Change versions accordingly
+NEQUIP_VERS=0.6.1
+ALLEGRO_VERS=main
+ALLEGRO_PAIR_VERS=main
+LAMMPS_VERS=stable
 
-# NOTE: CLONE THE "INSTALLATION_SCRIPTS" FOLDER TO YOUR SOFTWARE FOLDER AND JUST RUN THE INSTALLATION SCRIPT, THERE IS NO NEED TO MOVE THE SCRIPT AROUND, IT WILL NAVIGATE OUT OF THIS FOLDER TO INSTALL IN THE SOFTWARE FOLDER.
-
-# Expected directory structure:
-#
-# software/
-# ├── installation_scripts/
-# │   ├── allegro/
-# │       └── installation_allegro_lammps.sh
-# │   ├── deepmd/
-# │       └── installation_deepmd.sh
-# │   └── nequip/
-# │       └── installation_nequip_lammps.sh
-# ├── allegro
-# │   ├── allegro/
-# │   ├── pair_allegro/
-# │   └── lammps_allegro/
-# │       └── build/
-# │           └── lmp
-# ├── deepmd
-# │   ├── deepmd_source/
-# │   ├── deepmd_venv/
-# │   ├── lammps/
-# │   └── bin/
-# │       └── build/
-# │           └── lmp
-# └── nequip
-#     ├── nequip/
-#     ├── pair_nequip/
-#     └── lammps_nequip/
-#         └── build/
-#             └── lmp
-
-allegro_vers=main
-allegro_pair_vers=main
-nequip_vers=0.6.1
-lammps_vers=stable
+SOURCE_NAME=allegro_lammps
 
 # Location env variable
-lammps_path=/scratch/$USER/software/allegro_lammps/lammps_allegro
+LAMMPS_PATH=~/software/${SOURCE_NAME}/lammps_allegro
+SOURCE_PATH=~/software/${SOURCE_NAME}
+LIBTORCH_CMAKE_PATH=~/software/spack/opt/spack/linux-rhel8-x86_64_v3/gcc-11.3.0/py-torch-1.11.0-ik5hgzdvps4pu6ydmud466bnjflqic6u/lib/python3.10/site-packages/torch
 
-# ===============================================================
-# 🔧 Load System Modules (ONLY AVAILABLE ON DELFTBLUE A100 NODES)
-# ===============================================================
+# ======================
+# 🔧 Load System Modules
+# ======================
+module use ~/software/spack/share/spack/lmod/linux-rhel8-x86_64/Core
+module use ~/software/spack/share/spack/lmod/linux-rhel8-x86_64/openmpi/4.1.6-h2uag4k/Core
+
 module load 2024r1
 module load miniconda3
-module load cuda/11.6
-module load cudnn/8.7.0.84-11.8
-module load py-numpy/1.24.1
-module load py-scipy/1.11.3
 module load openmpi/4.1.6
+module load py-torch/1.11.0
+module load py-scipy/1.11.3
+module load py-kiwisolver/1.4.5
+module load py-sympy/1.11.1
+module load py-mpmath/1.2.1
+module load py-pillow/10.0.0
+module load py-packaging/23.1
+module load py-matplotlib/3.7.1
+module load py-cycler/0.11.0
+module load py-contourpy/1.0.7
+module load py-fonttools/4.39.4
+module load py-wandb/0.13.9
 module load cmake/3.27.7
 module load fftw/3.3.10_openmp_True
 
-# Set CUDA module paths
-export CUDA_HOME=/beegfs/apps/generic/cuda-11.6
-export LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH
-
-# Add cuDNN module paths
-export CUDNN_HOME=/beegfs/apps/generic/cudnn-8.7.0.84-11.8
-export LD_LIBRARY_PATH=$CUDNN_HOME/lib:$LD_LIBRARY_PATH
-
 # ===========================
-# 🔧 Create Conda Environment
+# 🔧 Create Conda Environment 
 # ===========================
-conda remove -n allegro --all -y
-conda create -n allegro python=3.10 -y
-conda activate allegro
+conda remove -n ${SOURCE_NAME} --all -y
+conda create -n ${SOURCE_NAME} python=3.10 -y
+conda activate ${SOURCE_NAME}
 
 cd ../../
-rm -rf allegro_lammps
-mkdir allegro_lammps
-cd allegro_lammps
+rm -rf ${SOURCE_NAME}
+mkdir ${SOURCE_NAME}
+cd ${SOURCE_NAME}
 
 # =======================
 # 🔧 Install Dependencies
 # =======================
-conda install pytorch==1.11.0 -c pytorch -y
 conda install mkl-include -y
-pip install wandb
-pip install nequip==$nequip_vers
+pip install nequip==${NEQUIP_VERS}
 
 # ==================
 # 🔧 Install Allegro
 # ==================
 git clone https://github.com/mir-group/allegro.git
 cd allegro
-git checkout $allegro_vers
+git checkout ${ALLEGRO_VERS}
 pip install .
-cd ..
+cd ${SOURCE_PATH}
 
 # ===================
 # 🔧 Git Clone LAMMPS
 # ===================
 git clone https://github.com/lammps/lammps.git lammps_allegro
 cd lammps_allegro
-git checkout $lammps_vers
-cd ..
+git checkout ${LAMMPS_VERS}
+cd ${SOURCE_PATH}
 
 # ========================================
 # 🔧 Install Pair_Allegro and Patch LAMMPS
 # ========================================
 git clone https://github.com/mir-group/pair_allegro
 cd pair_allegro
-git checkout $allegro_pair_vers
-./patch_lammps.sh $lammps_path
-cd $lammps_path
+git checkout ${LAMMPS_PAIR_VERS}
+./patch_lammps.sh ${LAMMPS_PATH}
+cd ${LAMMPS_PATH}
 
 # ================================
 # 🔧 Install OCTP and Patch Lammps
 # ================================
 git clone https://github.com/omoultosEthTuDelft/OCTP.git
-cp OCTP/*.h OCTP/*.cpp $lammps_path/src
-
-# ===================
-# 🔧 Install Libtorch
-# ===================
-wget https://download.pytorch.org/libtorch/cu113/libtorch-cxx11-abi-shared-with-deps-1.11.0%2Bcu113.zip
-unzip -q libtorch-cxx11-abi-shared-with-deps-1.11.0+cu113.zip
+cp OCTP/*.h OCTP/*.cpp ${LAMMPS_PATH}/src
 
 # ==================================
 # 🔧 Build LAMMPS with Kokkos + CUDA
@@ -185,19 +151,19 @@ done
 # Kokkos Configuration
 KOKKOS_SETTINGS="-D Kokkos_ENABLE_CUDA=ON"
 KOKKOS_SETTINGS+=" -D Kokkos_ENABLE_OPENMP=ON"
+KOKKOS_SETTINGS+=" -D Kokkos_ENABLE_SERIAL=ON"
 KOKKOS_SETTINGS+=" -D Kokkos_ARCH_AMPERE80=ON"  
 KOKKOS_SETTINGS+=" -D FFT_KOKKOS=cuFFT"
 
 # Allegro Settings
-ALLEGRO_SETTINGS="-DCMAKE_PREFIX_PATH=$lammps_path/libtorch"
-ALLEGRO_SETTINGS+=" -DMKL_INCLUDE_DIR=$CONDA_PREFIX/include"
+ALLEGRO_SETTINGS="-DCMAKE_PREFIX_PATH=${LIBTORCH_CMAKE_PATH}"
+ALLEGRO_SETTINGS+=" -DMKL_INCLUDE_DIR=${CONDA_PREFIX}/include"
 
 # Build LAMMPS
-CMAKE_PREP="cmake $ADD_PACKAGES $KOKKOS_SETTINGS $ALLEGRO_SETTINGS ../cmake"
+CMAKE_PREP="cmake ${ADD_PACKAGES} ${KOKKOS_SETTINGS} ${ALLEGRO_SETTINGS} ../cmake"
 $CMAKE_PREP
 CMAKE_BUILD="cmake --build . -j ${SLURM_CPUS_PER_TASK}"
 $CMAKE_BUILD
 
 cd ..
 conda deactivate
-
