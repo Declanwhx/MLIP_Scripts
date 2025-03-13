@@ -2,14 +2,13 @@
 1. If you followed the instructions in the main folder, you should have the `installation_scripts` folder in your `software` directory, run the installation scripts from their respective folders. There is no need to move the script anywhere else, as it will automatically navigate out of its folders to install in the `software` directory, this is shown in the directory structure.
 
 ### Directory Structure:
-
 ```
 	 software/
 	 ├── installation_scripts/
 	 │   ├── allegro/
-	 │       └── installation_allegro_lammps.sh
+	 │   │   └── installation_allegro_lammps.sh
 	 │   ├── deepmd/
-	 │       └── installation_deepmd_lammps.sh
+	 │   │   └── installation_deepmd_lammps.sh
 	 │   └── nequip/
 	 │       └── installation_nequip_lammps.sh
 	 ├── allegro
@@ -21,16 +20,17 @@
 	 ├── deepmd
 	 │   ├── deepmd_source/
 	 │   ├── deepmd_venv/
-	 │   	 └── bin/
-	 │           └── build/
-	 │               └── lmp
+	 │   │	 └── bin/
+	 │   │       └── build/
+	 │   │           └── lmp
 	 │   └── lammps/
-	 └── nequip
-	     ├── nequip/
-	     ├── pair_nequip/
-	     └── lammps_nequip/
-	         └── build/
-	             └── lmp
+	 ├── nequip
+	 │   ├── nequip/
+	 │   ├── pair_nequip/
+	 │   └── lammps_nequip/
+	 │       └── build/
+	 │           └── lmp
+	 └── spack
 ```
 2. cleaner.sh has been attached so that you can easily clean you pip and conda caches by attaching the script to an alias in your .bashrc file
    ```bash
