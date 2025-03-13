@@ -12,36 +12,6 @@
 
 # NOTE: CLONE THE "INSTALLATION_SCRIPTS" FOLDER TO YOUR SOFTWARE FOLDER AND JUST RUN THE INSTALLATION SCRIPT, THERE IS NO NEED TO MOVE THE SCRIPT AROUND, IT WILL NAVIGATE OUT OF THIS FOLDER TO INSTALL IN THE SOFTWARE FOLDER.
 
-# Expected directory structure:
-#
-# software/
-# ├── installation_scripts/
-# │   ├── allegro/
-# │       └── installation_allegro_lammps.sh
-# │   ├── deepmd/
-# │       └── installation_deepmd.sh
-# │   └── nequip/
-# │       └── installation_nequip_lammps.sh
-# ├── allegro
-# │   ├── allegro/
-# │   ├── pair_allegro/
-# │   └── lammps_allegro/
-# │       └── build/
-# │           └── lmp
-# ├── deepmd
-# │   ├── deepmd_source/
-# │   ├── deepmd_venv/
-# │   ├── lammps/
-# │   └── bin/
-# │       └── build/
-# │           └── lmp
-# └── nequip
-#     ├── nequip/
-#     ├── pair_nequip/
-#     └── lammps_nequip/
-#         └── build/
-#             └── lmp
-
 # Change versions accordingly
 NEQUIP_VERS=0.6.1
 ALLEGRO_VERS=main
