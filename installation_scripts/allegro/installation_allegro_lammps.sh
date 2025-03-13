@@ -8,6 +8,40 @@
 #SBATCH --mem-per-cpu=5G
 #SBATCH --account=research-me-pe
 
+# THIS FILE INSTALLS BOTH THE ALLEGRO MLIP AND PAIR_ALLEGRO LAMMPS
+
+# NOTE: CLONE THE "INSTALLATION_SCRIPTS" FOLDER TO YOUR SOFTWARE FOLDER AND JUST RUN THE INSTALLATION SCRIPT, THERE IS NO NEED TO MOVE THE SCRIPT AROUND, IT WILL NAVIGATE OUT OF THIS FOLDER TO INSTALL IN THE SOFTWARE FOLDER.
+
+# Expected directory structure:
+#
+# software/
+# ├── installation_scripts/
+# │   ├── allegro/
+# │       └── installation_allegro_lammps.sh
+# │   ├── deepmd/
+# │       └── installation_deepmd.sh
+# │   └── nequip/
+# │       └── installation_nequip_lammps.sh
+# ├── allegro
+# │   ├── allegro/
+# │   ├── pair_allegro/
+# │   └── lammps_allegro/
+# │       └── build/
+# │           └── lmp
+# ├── deepmd
+# │   ├── deepmd_source/
+# │   ├── deepmd_venv/
+# │   ├── lammps/
+# │   └── bin/
+# │       └── build/
+# │           └── lmp
+# └── nequip
+#     ├── nequip/
+#     ├── pair_nequip/
+#     └── lammps_nequip/
+#         └── build/
+#             └── lmp
+
 # Change versions accordingly
 NEQUIP_VERS=0.6.1
 ALLEGRO_VERS=main
@@ -16,7 +50,6 @@ LAMMPS_VERS=stable
 
 SOURCE_NAME=allegro_lammps
 
-# Location env variable
 LAMMPS_PATH=~/software/${SOURCE_NAME}/lammps_allegro
 SOURCE_PATH=~/software/${SOURCE_NAME}
 LIBTORCH_CMAKE_PATH=~/software/spack/opt/spack/linux-rhel8-x86_64_v3/gcc-11.3.0/py-torch-1.11.0-ik5hgzdvps4pu6ydmud466bnjflqic6u/lib/python3.10/site-packages/torch
@@ -85,7 +118,7 @@ cd ${SOURCE_PATH}
 # ========================================
 git clone https://github.com/mir-group/pair_allegro
 cd pair_allegro
-git checkout ${LAMMPS_PAIR_VERS}
+git checkout ${ALLEGRO_PAIR_VERS}
 ./patch_lammps.sh ${LAMMPS_PATH}
 cd ${LAMMPS_PATH}
 
