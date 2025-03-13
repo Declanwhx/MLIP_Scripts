@@ -12,42 +12,13 @@
 
 # NOTE: CLONE THE "INSTALLATION_SCRIPTS" FOLDER TO YOUR SOFTWARE FOLDER AND JUST RUN THE INSTALLATION SCRIPT, THERE IS NO NEED TO MOVE THE SCRIPT AROUND, IT WILL NAVIGATE OUT OF THIS FOLDER TO INSTALL IN THE SOFTWARE FOLDER.
 
-# Expected directory structure:
-#
-# software/
-# ├── installation_scripts/
-# │   ├── allegro/
-# │       └── installation_allegro_lammps.sh
-# │   ├── deepmd/
-# │       └── installation_deepmd.sh
-# │   └── nequip/
-# │       └── installation_nequip_lammps.sh
-# ├── allegro
-# │   ├── allegro/
-# │   ├── pair_allegro/
-# │   └── lammps_allegro/
-# │       └── build/
-# │           └── lmp
-# ├── deepmd
-# │   ├── deepmd_source/
-# │   ├── deepmd_venv/
-# │   ├── lammps/
-# │   └── bin/
-# │       └── build/
-# │           └── lmp
-# └── nequip
-#     ├── nequip/
-#     ├── pair_nequip/
-#     └── lammps_nequip/
-#         └── build/
-#             └── lmp
+DEEPMD_VERS="v3.0.2"
 
-deepmd_vers="v3.0.2"
+SOURCE_NAME=deepmd_lammps
 
-# CHANGE THESE ACCORDINGLY
-DEEPMD_PATH=/scratch/$USER/software/deepmd/deepmd_venv/lib/python3.10/site-packages/deepmd
-DEEPMD_SOURCE_PATH=/scratch/$USER/software/deepmd/deepmd_source
-LAMMPS_PATH=/scratch/$USER/software/deepmd/lammps-stable_29Aug2024_update1
+DEEPMD_PATH=~/software/${SOURCE_NAME}/deepmd_venv/lib/python3.10/site-packages/deepmd
+DEEPMD_SOURCE_PATH=~/software/${SOURCE_NAME}/deepmd_source
+LAMMPS_PATH=~/software/${SOURCE_NAME}/lammps-stable_29Aug2024_update1
 
 # ====================================================================
 # 🔧 Load System Modules (CHANGE YOUR MODULE USE PATH ACCORDINGLY)
@@ -65,15 +36,15 @@ module load gcc/11.3.0
 module load cmake
 
 cd ../../
-rm -rf deepmd
-mkdir deepmd
-cd deepmd
+rm -rf ${SOURCE_NAME}
+mkdir ${SOURCE_NAME} 
+cd ${SOURCE_NAME}
 
 # ===================================================================
 # 🔍 Use Spack PyTorch (`v6gfbmm`) Only (HPC PyTorch is non DDP) 
 # ===================================================================
 export SPACK_PYTORCH_PATH=$(spack location -i /v6gfbmm)
-export LD_LIBRARY_PATH=$SPACK_PYTORCH_PATH/lib/python3.10/site-packages/torch/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=${SPACK_PYTORCH_PATH}/lib/python3.10/site-packages/torch/lib:$LD_LIBRARY_PATH
 python -c "import torch; print(torch.__file__)"  # Check PyTorch path
 TORCH_DIR=$(python -c "import torch; print(torch.__path__[0])")/share/cmake/Torch
 
@@ -82,10 +53,10 @@ TORCH_DIR=$(python -c "import torch; print(torch.__path__[0])")/share/cmake/Torc
 # ========================
 wget https://github.com/lammps/lammps/archive/stable_29Aug2024_update1.tar.gz
 tar xf stable_29Aug2024_update1.tar.gz
-mkdir -p $LAMMPS_PATH/build/
+mkdir -p ${LAMMPS_PATH}/build/
 
-git clone --branch ${deepmd_vers} https://github.com/deepmodeling/deepmd-kit.git deepmd_source
-mkdir -p $DEEPMD_SOURCE_PATH/source/build/
+git clone --branch ${DEEPMD_VERS} https://github.com/deepmodeling/deepmd-kit.git deepmd_source
+mkdir -p ${DEEPMD_SOURCE_PATH}/source/build/
 
 # ================================
 # 🔧 Create Python Environment
@@ -96,7 +67,7 @@ source deepmd_venv/bin/activate
 # ========================================
 # 🔧 Install DeePMD-Kit's Python interface
 # ========================================
-cd $DEEPMD_SOURCE_PATH
+cd ${DEEPMD_SOURCE_PATH}
 
 DP_VARIANT=cuda \
 CUDAToolkit_ROOT=${CUDA_PATH} \
@@ -107,7 +78,7 @@ PYTORCH_ROOT=${SPACK_PYTORCH_PATH} pip install .
 #==========================================
 # 🔧 Install DeePMD-Kit's C++ interface
 # =========================================
-cd $DEEPMD_SOURCE_PATH/source/build
+cd ${DEEPMD_SOURCE_PATH}/source/build
 
 DEEPMD_CPP_SETTINGS="-DENABLE_PYTORCH=TRUE"
 DEEPMD_CPP_SETTINGS+=" -DCMAKE_PREFIX_PATH=${SPACK_PYTORCH_PATH}"
@@ -118,7 +89,7 @@ DEEPMD_CPP_SETTINGS+=" -DCAFFE2_USE_CUDNN=TRUE"
 DEEPMD_CPP_SETTINGS+=" -DCMAKE_CXX_FLAGS=\"-D_GLIBCXX_USE_CXX11_ABI=1\""
 DEEPMD_CPP_SETTINGS+=" -DTorch_DIR=${TORCH_DIR}"
 
-CMAKE_PREP="cmake $DEEPMD_CPP_SETTINGS .."
+CMAKE_PREP="cmake ${DEEPMD_CPP_SETTINGS} .."
 $CMAKE_PREP
 
 make -j${SLURM_CPUS_PER_TASK}
@@ -130,7 +101,7 @@ make install
 
 make lammps
 
-cd $LAMMPS_PATH/build
+cd ${LAMMPS_PATH}/build
 echo "include(${DEEPMD_SOURCE_PATH}/source/lmp/builtin.cmake)" >> ../cmake/CMakeLists.txt
 
 # 1) PYTHON -- useful (Required python-dev)
@@ -181,8 +152,7 @@ DEEPMD_SETTINGS+=" -D BUILD_SHARED_LIBS=yes"
 DEEPMD_SETTINGS+=" -D CMAKE_INSTALL_PREFIX=${DEEPMD_PATH}"
 DEEPMD_SETTINGS+=" -D CMAKE_INSTALL_FULL_LIBDIR=${DEEPMD_PATH}/lib"
 
-# Build LAMMPS
-CMAKE_PREP="cmake $ADD_PACKAGES $DEEPMD_SETTINGS ../cmake"
+CMAKE_PREP="cmake ${ADD_PACKAGES} ${DEEPMD_SETTINGS} ../cmake"
 $CMAKE_PREP
 
 make -j${SLURM_CPUS_PER_TASK}
