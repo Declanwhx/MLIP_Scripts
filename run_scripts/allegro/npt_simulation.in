@@ -1,0 +1,134 @@
+units metal
+atom_style atomic
+dimension 3
+boundary p p p
+
+########################################## VARIABLES #############################################
+# variable run_no equal			${run_no}
+
+variable Temp equal                     300.0	# Temperature (Kelvin)
+variable Pres equal 			101325 # Pressure (bars)
+
+variable Nnptinit equal			10000
+variable Nnptequi equal			100000
+variable Nnptprod equal			6000000
+
+variable Nnvtinit equal			10000	# Timesteps
+
+variable Nf equal                       1000      # Nfreq (fix ave/time and thermo)
+variable Ne equal                       20          # Nevery (fix ave/time)
+variable Nr equal                       ${Nf}/${Ne} # Nrepeat (fix ave/time)
+
+variable Nthermos equal			10	# Timesteps
+variable Nthermol equal			10000	# Timesteps
+
+########################################## SET-UP ########################################## 
+#
+newton on # set newton on for pair_allegro (off for pair_nequip)
+read_data ./input_files/box_initialization/temp_300.0/h2o_1.data
+
+pair_style	allegro6464
+pair_coeff	* * h2o-deployed.pth O H
+
+mass 1 15.9994 # Oxygen mass
+mass 2 1.00794 # Hydrogen mass
+
+neighbor 2.0 bin
+neigh_modify delay 5 delay 1 check yes
+
+########################################## NPT INITIALIZATION  ##########################################
+fix 1 all npt/kk temp ${Temp} ${Temp} 0.01 iso ${Pres} ${Pres} 0.1
+
+# Set temperature
+velocity all create ${Temp} 12345 loop geom
+
+timestep 0.000005
+run ${Nnptinit} 
+
+timestep 0.00001
+run ${Nnptinit} 
+
+timestep 0.0001
+run ${Nnptinit} 
+
+timestep 0.0002
+run ${Nnptinit} 
+
+timestep 0.0005
+run ${Nnptinit} 
+
+unfix 1
+reset_timestep 0
+
+########################################### NPT EQUILIBRATION ###########################################
+fix 1 all npt/kk temp ${Temp} ${Temp} 0.1 iso ${Pres} ${Pres} 0.5
+
+timestep 0.0005
+run ${Nnptequi}
+
+unfix 1
+reset_timestep 0
+
+########################################### NPT PRODUCTION ###########################################
+fix 1 all npt/kk temp ${Temp} ${Temp} 0.1 iso ${Pres} ${Pres} 0.5
+
+variable Volume equal vol
+variable Dens equal density
+variable TotalEnergy equal etotal
+variable PotEnergy equal pe
+variable KinEnergy equal ke
+
+compute Tnptprod all temp/kk
+compute Pnptprod all pressure Tnptprod
+
+fix VoluAve all ave/time ${Ne} ${Nr} ${Nf} v_Volume file volume.dat
+fix DataAve all ave/time ${Ne} ${Nr} ${Nf} &
+    v_Dens v_TotalEnergy v_PotEnergy v_KinEnergy c_Tnptprod c_Pnptprod &
+    file system_properties_prod.dat
+
+thermo ${Nthermol}
+
+run ${Nnptprod}
+
+#################### 4) Initializing the NVT ensemble ####################
+# scaling the size of the system to the average volume
+variable sidesize equal (f_VoluAve^(1.0/3.0))    # get the volume
+variable xlow equal xlo
+variable ylow equal ylo
+variable zlow equal zlo
+variable xhig equal (xlo+${sidesize})
+variable yhig equal (ylo+${sidesize})
+variable zhig equal (zlo+${sidesize})
+change_box all x final ${xlow} ${xhig} y final ${ylow} ${yhig} z final ${zlow} ${zhig}
+unfix VoluAve
+unfix DataAve
+
+########################################## NVT INITIALIZATION  ##########################################
+thermo ${Nthermos}
+# Nose-Hoover thermostat, 300K
+fix thermostat all nvt/kk temp ${Temp} ${Temp} 0.01
+
+# Set temperature
+velocity all create c_Tnptprod 12345 loop geom
+
+# Set timestep
+timestep 0.000005
+run ${Nnvtinit}
+
+timestep 0.00001
+run ${Nnvtinit}
+
+timestep 0.0001
+run ${Nnvtinit}
+
+timestep 0.0002
+run ${Nnvtinit}
+
+timestep 0.0005
+run ${Nnvtinit}
+
+unfix thermostat
+reset_timestep 0
+
+write_restart simulation.restart
+

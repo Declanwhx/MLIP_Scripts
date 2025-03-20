@@ -1,7 +1,7 @@
 #!/bin/sh
-#SBATCH --job-name="allegro lammps run"
+#SBATCH --job-name="allegro lammps 250 molecules run 6 r"
 #SBATCH --partition=gpu-a100
-#SBATCH --time=00:25:00
+#SBATCH --time=15:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=2
 #SBATCH --cpus-per-task=2
@@ -12,6 +12,7 @@
 #SBATCH --output=mpi-out.%j
 #SBATCH --error=mpi-err.%j
 
+run_type=npt
 lmp_path=~/software/allegro_lammps/lammps_allegro/build
 
 # ------------------------------ Load Modules ------------------------------ #
@@ -66,14 +67,14 @@ srun --mpi=pmix \
      --cpus-per-task=${SLURM_CPUS_PER_TASK} \
      --gpu-bind=none \
      "$lmp_path/lmp" \
-     -in ./nvt_simulation.in \
+     -in ./${run_type}_simulation.in \
      -k on g ${SLURM_NTASKS} t ${SLURM_CPUS_PER_TASK} \
      -sf kk \
      -pk kokkos neigh full comm device cuda/aware on
 
 # ------------------------------ Move Output Files ------------------------------ #
-mkdir ${SLURM_JOB_PARTITION}_${SLURM_NTASKS}G_${SLURM_CPUS_PER_TASK}T
-mv cuda.h mpi-* slurm* sys* volume.dat ${SLURM_JOB_PARTITION}_${SLURM_NTASKS}G_${SLURM_CPUS_PER_TASK}T
+mkdir ${SLURM_JOB_PARTITION}_${SLURM_NTASKS}G_${SLURM_CPUS_PER_TASK}T_${run_type}
+mv log.lammps cuda.h mpi-* slurm* sys* volume.dat ${SLURM_JOB_PARTITION}_${SLURM_NTASKS}G_${SLURM_CPUS_PER_TASK}T_${run_type}
 
 # ------------------------------ Copy Back and Cleanup ------------------------------ #
 echo "Simulation done, copying back" 

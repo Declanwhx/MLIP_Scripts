@@ -1,0 +1,117 @@
+units	metal
+atom_style atomic
+dimension 3
+boundary p p p
+
+########################################## VARIABLES #############################################
+# variable run_no equal			${run_no}
+
+variable temp equal                     300.0	# Temperature (Kelvin)
+# variable temp equal 			${temp}
+
+variable Nnvtinit equal			1000	# Timesteps
+variable Nnvtequi equal			25000	# Timesteps
+variable Nnvtprod equal			100000	# Timesteps
+
+variable Nf equal                       1000      # Nfreq (fix ave/time and thermo)
+variable Ne equal                       20          # Nevery (fix ave/time)
+variable Nr equal                       ${Nf}/${Ne} # Nrepeat (fix ave/time)
+
+variable Nthermos equal			10	# Timesteps
+variable Nthermol equal			10000	# Timesteps
+
+########################################## SET-UP ########################################## 
+#
+newton on # set newton on for pair_allegro (off for pair_nequip)
+read_data ./input_files/box_initialization/temp_300.0/h2o_1.data
+
+pair_style	allegro6464
+pair_coeff	* * h2o-deployed.pth O H
+
+mass 1 15.9994 # Oxygen mass
+mass 2 1.00794 # Hydrogen mass
+
+neighbor 2.0 bin
+neigh_modify delay 5 delay 1 check yes
+
+########################################## NVT INITIALIZATION  ##########################################
+thermo ${Nthermos}
+
+# Set velocity 
+velocity all create ${temp} 12345 loop geom
+
+# Nose-Hoover thermostat, 300K
+fix thermostat all nvt/kk temp ${temp} ${temp} 0.01
+
+# Set timestep
+timestep 0.000005
+run ${Nnvtinit}
+
+timestep 0.00001
+run ${Nnvtinit}
+
+timestep 0.0001
+run ${Nnvtinit}
+
+timestep 0.0002
+run ${Nnvtinit}
+
+timestep 0.0005
+run ${Nnvtinit}
+
+unfix thermostat
+reset_timestep 0
+
+########################################### NVT EQUILIBRATION ###########################################
+fix thermostat all nvt/kk temp ${temp} ${temp} 0.1
+
+# Define variables for different properties
+variable Volume equal vol
+variable Dens equal density
+variable TotalEnergy equal etotal
+variable PotEnergy equal pe
+variable KinEnergy equal ke
+
+compute Tequi all temp/kk
+compute Pequi all pressure Tequi
+
+fix VoluAve all ave/time ${Ne} ${Nr} ${Nf} v_Volume file volume_equi.dat
+fix DataAve all ave/time ${Ne} ${Nr} ${Nf} &
+    v_Dens v_TotalEnergy v_PotEnergy v_KinEnergy c_Tequi c_Pequi &
+    file system_properties_equi.dat
+
+thermo ${Nthermol}
+
+timestep 0.0005 
+run ${Nnvtequi}
+
+unfix thermostat
+unfix VoluAve  
+unfix DataAve  
+
+reset_timestep 0
+
+########################################### NVT PRODUCTION ###########################################
+
+fix thermostat all nvt/kk temp ${temp} ${temp} 0.1
+
+variable Volume equal vol
+variable Dens equal density
+variable TotalEnergy equal etotal
+variable PotEnergy equal pe
+variable KinEnergy equal ke
+
+compute Tprod all temp/kk
+compute Pprod all pressure Tprod
+
+fix VoluAve all ave/time ${Ne} ${Nr} ${Nf} v_Volume file volume_prod.dat
+fix DataAve all ave/time ${Ne} ${Nr} ${Nf} &
+    v_Dens v_TotalEnergy v_PotEnergy v_KinEnergy c_Tprod c_Pprod &
+    file system_properties_prod.dat
+
+thermo ${Nthermol}
+
+# run 5ps
+run ${Nnvtprod}
+
+write_dump all xyz system.xyz modify pad 6
