@@ -1,5 +1,8 @@
 #!/bin/sh
 
+module load 2024r1
+module load miniconda3
+
 # Change versions accordingly
 NEQUIP_VERS=0.6.1
 ALLEGRO_VERS=main
@@ -24,10 +27,7 @@ rm -rf ${SOURCE_NAME}
 # =======================
 # ?~_~T? Install Dependencies
 # =======================
-conda install pytorch==1.11.0 -c pytorch -y
 conda install mkl-include -y
-pip install wandb
-pip install nequip==${NEQUIP_VERS}
 
 # ==================
 # ?~_~T? Install Allegro
@@ -35,7 +35,6 @@ pip install nequip==${NEQUIP_VERS}
 git clone https://github.com/mir-group/allegro.git
 cd allegro
 git checkout ${ALLEGRO_VERS}
-pip install .
 cd ${SOFTWARE_PATH}
 
 # ===================
@@ -60,7 +59,6 @@ cd ${SOFTWARE_PATH}
 # ================================
 git clone https://github.com/omoultosEthTuDelft/OCTP.git
 cp OCTP/*.h OCTP/*.cpp ${LAMMPS_PATH}/src
-cd ${SOFTWARE_PATH}
 
 rm -rf pair_allegro
 rm -rf OCTP

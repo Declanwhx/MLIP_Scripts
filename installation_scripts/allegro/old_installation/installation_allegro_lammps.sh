@@ -15,6 +15,7 @@
 # Change versions accordingly
 SOURCE_NAME=allegro
 
+ALLEGRO_PATH=~/software/allegro
 LAMMPS_PATH=~/software/lammps
 
 # ======================
@@ -42,6 +43,17 @@ export LD_LIBRARY_PATH=$CUDNN_HOME/lib:$LD_LIBRARY_PATH
 # 🔧 Create Conda Environment 
 # ===========================
 conda activate ${SOURCE_NAME}
+
+# =======================
+# ?~_~T? Install Dependencies
+# =======================
+conda install pytorch==1.11.0 -c pytorch -y
+conda install mkl-include -y
+pip install wandb
+pip install nequip==${NEQUIP_VERS}
+
+cd ${ALLEGRO_PATH}
+pip install .
 
 # ==================================
 # 🔧 Build LAMMPS with Kokkos + CUDA

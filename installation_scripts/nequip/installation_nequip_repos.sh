@@ -2,11 +2,10 @@
 
 # Change versions accordingly
 NEQUIP_VERS=0.6.1
-ALLEGRO_VERS=main
-ALLEGRO_PAIR_VERS=main
+NEQUIP_PAIR_VERS=main
 LAMMPS_VERS=stable
 
-SOURCE_NAME=allegro
+SOURCE_NAME=nequip
 
 LAMMPS_PATH=~/software/lammps
 SOFTWARE_PATH=~/software/
@@ -27,29 +26,26 @@ rm -rf ${SOURCE_NAME}
 conda install mkl-include -y
 pip install nequip==${NEQUIP_VERS}
 
-# ==================
-# ?~_~T? Install Allegro
-# ==================
-git clone https://github.com/mir-group/allegro.git
-cd allegro
-git checkout ${ALLEGRO_VERS}
-pip install .
-cd ${SOFTWARE_PATH}
-
 # ===================
 # ?~_~T? Git Clone LAMMPS
 # ===================
-git clone https://github.com/lammps/lammps.git 
-cd lammps
-git checkout ${LAMMPS_VERS}
+if [ ! -d "lammps" ]; then
+  echo "Cloning LAMMPS..."
+  git clone https://github.com/lammps/lammps.git
+  cd ${LAMMPS_PATH}
+  git checkout ${LAMMPS_VERS}
+else
+  echo "LAMMPS folder already exists. Skipping clone."
+fi
+
 cd ${SOFTWARE_PATH}
 
-# ========================================
-# ?~_~T? Install Pair_Allegro and Patch LAMMPS
-# ========================================
-git clone https://github.com/mir-group/pair_allegro
-cd pair_allegro
-git checkout ${ALLEGRO_PAIR_VERS}
+# =====================================
+# ?~_~T? Clone Pair_Nequip and Patch LAMMPS
+# =====================================
+git clone https://github.com/mir-group/pair_nequip
+cd pair_nequip
+git checkout ${NEQUIP_PAIR_VERS}
 ./patch_lammps.sh ${LAMMPS_PATH}
 cd ${SOFTWARE_PATH}
 
@@ -59,6 +55,6 @@ cd ${SOFTWARE_PATH}
 git clone https://github.com/omoultosEthTuDelft/OCTP.git
 cp OCTP/*.h OCTP/*.cpp ${LAMMPS_PATH}/src
 
-rm -rf pair_allegro
+rm -rf pair_nequip
 rm -rf OCTP
 

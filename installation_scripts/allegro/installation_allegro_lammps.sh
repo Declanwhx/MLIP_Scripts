@@ -15,6 +15,7 @@
 # Change versions accordingly
 SOURCE_NAME=allegro
 
+ALLEGRO_PATH=~/software/${SOURCE_NAME}
 LAMMPS_PATH=~/software/lammps
 
 LIBTORCH_CMAKE_PATH=~/software/spack/opt/spack/linux-rhel8-x86_64_v3/gcc-11.3.0/py-torch-1.11.0-ik5hgzdvps4pu6ydmud466bnjflqic6u/lib/python3.10/site-packages/torch
@@ -47,6 +48,15 @@ module load fftw/3.3.10_openmp_True
 # 🔧 Create Conda Environment 
 # ===========================
 conda activate ${SOURCE_NAME}
+
+# =======================
+# ?~_~T? Install Dependencies
+# =======================
+conda install mkl-include -y
+pip install nequip==${NEQUIP_VERS}
+
+cd ${ALLEGRO_PATH}
+pip install .
 
 # ==================================
 # 🔧 Build LAMMPS with Kokkos + CUDA
