@@ -1,9 +1,9 @@
 ### NOTES:
-1. Given that DelftsBlue does not allow for git clones in compute nodes, we perform most of the installation in the login node using the script installation_allegro_repos.sh
+1. Given that DelftsBlue does not allow for git clones in compute nodes, we perform the git clones on the login node using the script installation_repos.sh
    ```bash
    ./installation_repos.sh
    ```
-   Once this is done, one can then send the installation_lammps.sh script as an sbatch job to perform the building and installation of LAMMPS:
+   Once this is done, one can then send the installation_allegro_lammps.sh script as an sbatch job to perform the building and installation:
    ```bash
    sbatch installation_allegro_lammps.sh
    ```
