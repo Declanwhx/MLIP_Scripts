@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Created by: CHATGPT
 
 import sys
 from ase.io import read
